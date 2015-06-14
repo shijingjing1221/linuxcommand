@@ -21,11 +21,11 @@
             <h1>{{title}}</h1>
             <div class="row">
                 <div class="col-sm-12">
-                    <ui-select class="full-width" on-remove="removeKey($item, $model)" on-select="addKey($item, $model)" theme="bootstrap" close-on-select="true" multiple="" ng-model="keys.wanted">
-                        <ui-select-match placeholder="Select a keys..."> {{$item.name}}
+                    <ui-select class="full-width" on-remove="removeKeyword($item, $model)" on-select="addKeyword($item, $model)" theme="bootstrap" close-on-select="true" multiple="" ng-model="keywords.wanted">
+                        <ui-select-match placeholder="Select a keywords..."> {{$item.name}}
                         </ui-select-match>
-                        <ui-select-choices repeat="key in keyNames | filter:$select.search">
-                            {{key.name}}
+                        <ui-select-choices repeat="keyword in keywordNames | filter:$select.search">
+                            {{keyword.name}}
                         </ui-select-choices>
                     </ui-select>
                 </div>
@@ -36,9 +36,9 @@
                 <button class="btn btn-default"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...</button>
             </div>
         
-        <div class="panel panel-default " ng-repeat="key in keys.loaded ">
+        <div class="panel panel-default " ng-repeat="keyword in keywords.loaded ">
             <div class="panel-heading ">
-                <h3 class="panel-title ">{{key.name}}</h3>
+                <h3 class="panel-title ">{{keyword.name}}</h3>
             </div>
             <div class="panel-body ">
                 <div class="row ">
@@ -49,7 +49,7 @@
                             </div>
                             <div class="panel-body ">
                                 <ul>
-                                    <li ng-repeat="command in key.commands "> {{command.name}}</li>
+                                    <li ng-repeat="command in keyword.commands "> {{command.name}}</li>
                                 </ul>
                             </div>
                         </div>
@@ -61,7 +61,7 @@
                             </div>
                             <div class="panel-body ">
                                 <ul>
-                                    <li ng-repeat="file in key.files "> {{file.name}}</li>
+                                    <li ng-repeat="file in keyword.files "> {{file.name}}</li>
                                 </ul>
                             </div>
                         </div>

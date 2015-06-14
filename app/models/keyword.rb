@@ -1,4 +1,4 @@
-class Key < ActiveRecord::Base
+class Keyword < ActiveRecord::Base
   attr_accessible :name
   has_many :mappers
   def get_resource_ids

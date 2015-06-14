@@ -1,6 +1,6 @@
 class CreateKeyIscsi < ActiveRecord::Migration
   def up
-    @key = Key.create(name: "iSCSI");
+    @keyword = Keyword.create(name: "iSCSI");
     @resource_type_command = 0
     @resource_type_file = 1
     @command_names = ["yum install -y targetcli",
@@ -41,11 +41,11 @@ class CreateKeyIscsi < ActiveRecord::Migration
                    "/var/lib/iscsi/nodes/*"]
     @command_names.each do |command_name|
       @resource = Resource.create(rtype: @resource_type_command, name: command_name)
-      Mapper.create(key_id: @key.id, resource_id: @resource.id)
+      Mapper.create(keyword_id: @keyword.id, resource_id: @resource.id)
     end
     @file_names.each do |file_name|
       @resource = Resource.create(rtype: @resource_type_file, name: file_name)
-      Mapper.create(key_id: @key.id, resource_id: @resource.id)
+      Mapper.create(keyword_id: @keyword.id, resource_id: @resource.id)
     end
   end
 

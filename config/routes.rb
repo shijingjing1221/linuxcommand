@@ -57,7 +57,7 @@ RailsApp::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
-  resources :keys
-  get "/api/keys/:id", to: 'api#get_key'
-  get "/api/keys",     to: 'api#get_keys'
+  resources :keywords
+  get "/api/keywords/:id", to: 'api#get_keyword'
+  get "/api/keywords",     to: 'api#get_keywords'
 end
