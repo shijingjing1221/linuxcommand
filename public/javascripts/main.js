@@ -3,11 +3,7 @@ mainApp.factory("KeywordsApi", function ($resource) {
     return $resource('/api' + '/keywords/:id', { id: '@id' }, {});
 });
 mainApp.controller("MainController", function($scope, KeywordsApi) {
-    $scope.title = "Search commands";
-    // $scope.keywordNames = [{
-    //     id: 1,
-    //     name: "iSCSI"
-    // }];
+    $scope.title = "Command search ";
 
     $scope.keywordNames = KeywordsApi.query({
         name_only: true
