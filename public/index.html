@@ -16,33 +16,58 @@
 </head>
 
 <body ng-controller="MainController">
-    <header class="navbar navbar-static-top bs-docs-nav" id="top" role="banner">
+    <header class="navbar navbar-static-top bs-docs-nav sfbgg" id="top" role="banner">
         <div class="container">
-            <div class="navbar-header">
-                <h2>
-                    {{title}}
-                </h2>
+            <div class="row">
+                <div class="col-sm-2">
+                    <label class="pull-right"> {{title}}:</label>
+                </div>
+                <div class="col-sm-10">
+                    <ui-select class="full-width" on-remove="removeKeyword($item, $model)" on-select="addKeyword($item, $model)" theme="bootstrap" close-on-select="true" multiple="" ng-model="keywords.wanted">
+                        <ui-select-match placeholder="Select a keywords..."> {{$item.name}}
+                        </ui-select-match>
+                        <ui-select-choices repeat="keyword in keywordNames | filter:$select.search">
+                            {{keyword.name}}
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
             </div>
         </div>
     </header>
     <div class="container">
-        <div class="row">
-            <div class="col-sm-12">
-                <ui-select class="full-width" on-remove="removeKeyword($item, $model)" on-select="addKeyword($item, $model)" theme="bootstrap" close-on-select="true" multiple="" ng-model="keywords.wanted">
-                    <ui-select-match placeholder="Select a keywords..."> {{$item.name}}
-                    </ui-select-match>
-                    <ui-select-choices repeat="keyword in keywordNames | filter:$select.search">
-                        {{keyword.name}}
-                    </ui-select-choices>
-                </ui-select>
-            </div>
-        </div>
-        <br />
-        <br />
         <div class="center-block" ng-show="loading">
             <button class="btn btn-default"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...</button>
         </div>
-        <div class="panel panel-default " ng-repeat="keyword in keywords.loaded ">
+        <div class="bs-callout" ng-repeat="keyword in keywords.loaded ">
+            <h4>{{keyword.name}}</h4>
+            <div class="row ">
+                <div class="col-sm-8">
+                    <div class="panel panel-info ">
+                        <div class="panel-heading ">
+                            <h3 class="panel-title ">Commands</h3>
+                        </div>
+                        <div class="panel-body ">
+                            <ul>
+                                <li ng-repeat="command in keyword.commands "> {{command.name}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="panel panel-success ">
+                        <div class="panel-heading ">
+                            <h3 class="panel-title ">Configuration file</h3>
+                        </div>
+                        <div class="panel-body ">
+                            <ul>
+                                <li ng-repeat="file in keyword.files "> {{file.name}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--         <div class="panel panel-default " ng-repeat="keyword in keywords.loaded ">
             <div class="panel-heading ">
                 <h3 class="panel-title ">{{keyword.name}}</h3>
             </div>
@@ -74,7 +99,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
     </div>
 </body>
 
