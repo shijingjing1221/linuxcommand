@@ -1,4 +1,5 @@
-var mainApp = angular.module("mainApp", ['ui.select', 'ngResource']);
+var mainApp = angular.module("mainApp", ['ui.select', 'ngResource', 'ngClipboard']);
+
 
 mainApp.factory("KeywordsApi", function($resource) {
     return $resource('/api' + '/keywords/:id', {
@@ -34,6 +35,10 @@ mainApp.controller("MainController", function($scope, KeywordsApi) {
             });
         }
     };
+
+    $scope.copyToClipboard = function(content){
+
+    }
 
 
 });

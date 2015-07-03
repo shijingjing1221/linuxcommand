@@ -11,6 +11,8 @@
     <script src="javascripts/lib/angular-resource.min.js"></script>
     <script src="javascripts/lib/select.js"></script>
     <script src="javascripts/lib/lodash.min.js"></script>
+    <script src="javascripts/lib/ZeroClipboard.min.js"></script>
+    <script src="javascripts/lib/ng-clip.min.js"></script>
     <script src="javascripts/main.js"></script>
     <title>Search commands</title>
 </head>
@@ -50,7 +52,13 @@
                         </div>
                         <div class="panel-body ">
                             <ul>
-                                <li ng-repeat="command in keyword.commands "> {{command.name}}</li>
+                                <li ng-repeat="command in keyword.commands" ng-mouseleave="myClass=''" ng-mouseenter="myClass='selected'" ng-class="myClass">
+                                    <span>{{command.name}}</span>
+                                    <div ng-if="myClass=='selected'">
+                                    <br />
+                                    <button class="btn btn-info btn-xs right" clip-copy="command.name">copy</button>
+                                </div>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -62,7 +70,14 @@
                         </div>
                         <div class="panel-body ">
                             <ul>
-                                <li ng-repeat="file in keyword.files "> {{file.name}}</li>
+                                <li ng-repeat="file in keyword.files" ng-mouseleave="myClass=''" ng-mouseenter="myClass='selected'" ng-class="myClass">
+                                    <div>{{file.name}}</div>
+                                    <div ng-if="myClass=='selected'">
+                                    <br />
+                                    <button class="btn btn-success btn-xs right" clip-copy="file.name">copy</button>
+                                </div>
+                               
+                                </li>
                             </ul>
                         </div>
                     </div>

@@ -21,7 +21,6 @@
     }
 }
 
-
 .sfbgg {
     background-color: #f1f1f1;
     border-bottom: 1px solid #666;
@@ -55,6 +54,30 @@
     color: #1b809e;
 }
 
-.remove.pull-right.glyphicon.glyphicon-minus, .remove.pull-right.glyphicon.glyphicon-remove{
+.remove.pull-right.glyphicon.glyphicon-minus,
+.remove.pull-right.glyphicon.glyphicon-remove {
     color: red;
-};
+}
+
+
+ul li.selected {
+    background-color: #E8E8E8;
+}
+
+ul li.selected span, ul li.selected div{
+    font-size: 2.0rem;
+    font-weight: 700;
+    display: block;
+
+}
+
+ul li {
+    position: relative;
+    right: 0px;
+}
+
+ul li button{
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+}
