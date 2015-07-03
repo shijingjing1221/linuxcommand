@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/app.css">
     <script src="javascripts/lib/angular.min.js"></script>
     <script src="javascripts/lib/angular-resource.min.js"></script>
+    <script src="javascripts/lib/ui-bootstrap-tpls-0.13.0.min.js"></script>
     <script src="javascripts/lib/select.js"></script>
     <script src="javascripts/lib/lodash.min.js"></script>
     <script src="javascripts/lib/ZeroClipboard.min.js"></script>
@@ -56,7 +57,7 @@
                                     <span>{{command.name}}</span>
                                     <div ng-if="myClass=='selected'">
                                     <br />
-                                    <button class="btn btn-info btn-xs right" clip-copy="command.name">copy</button>
+                                    <button class="btn btn-info btn-xs right" clip-copy="command.name" popover-placement="top" popover="Copied!">copy</button>
                                 </div>
                                 </li>
                             </ul>
@@ -74,7 +75,7 @@
                                     <div>{{file.name}}</div>
                                     <div ng-if="myClass=='selected'">
                                     <br />
-                                    <button class="btn btn-success btn-xs right" clip-copy="file.name">copy</button>
+                                    <button class="btn btn-success btn-xs right" clip-copy="file.name" popover-placement="top" popover="Copied!">copy</button>
                                 </div>
                                
                                 </li>

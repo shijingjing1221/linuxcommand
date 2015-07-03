@@ -1,4 +1,4 @@
-var mainApp = angular.module("mainApp", ['ui.select', 'ngResource', 'ngClipboard']);
+var mainApp = angular.module("mainApp", ['ui.select', 'ngResource', 'ngClipboard','ui.bootstrap']);
 
 
 mainApp.factory("KeywordsApi", function($resource) {
