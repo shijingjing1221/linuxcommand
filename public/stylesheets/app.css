@@ -54,3 +54,7 @@
 .bs-callout-info h4 {
     color: #1b809e;
 }
+
+.remove.pull-right.glyphicon.glyphicon-minus, .remove.pull-right.glyphicon.glyphicon-remove{
+    color: red;
+};

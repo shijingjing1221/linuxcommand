@@ -1,7 +1,11 @@
-var mainApp = angular.module("mainApp", ['ui.select','ngResource']);
-mainApp.factory("KeywordsApi", function ($resource) {
-    return $resource('/api' + '/keywords/:id', { id: '@id' }, {});
+var mainApp = angular.module("mainApp", ['ui.select', 'ngResource']);
+
+mainApp.factory("KeywordsApi", function($resource) {
+    return $resource('/api' + '/keywords/:id', {
+        id: '@id'
+    }, {});
 });
+
 mainApp.controller("MainController", function($scope, KeywordsApi) {
     $scope.title = "Command search ";
 
@@ -11,8 +15,8 @@ mainApp.controller("MainController", function($scope, KeywordsApi) {
     $scope.keywords = {};
     $scope.keywords.loaded = {};
     $scope.removeKeyword = function(item) {
-        _.remove($scope.keywords.wanted, function(n) {
-            return n.id === item.id;
+        $scope.keywords.wanted = _.filter($scope.keywords.wanted, function(keyword) {
+            return keyword.id != item.id;
         });
         delete $scope.keywords.loaded[item.id];
 
@@ -30,4 +34,6 @@ mainApp.controller("MainController", function($scope, KeywordsApi) {
             });
         }
     };
+
+
 });
