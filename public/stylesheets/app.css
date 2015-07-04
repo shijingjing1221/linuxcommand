@@ -81,3 +81,15 @@ ul li button{
     right: 0px;
     bottom: 0px;
 }
+
+.form-inline.command .form-group {
+  width: 90%;
+}
+
+.form-inline.file .form-group {
+  width: 80%;
+}
+
+.form-inline input.form-control {
+  width: 100%;
+}

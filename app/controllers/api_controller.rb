@@ -18,4 +18,26 @@ class ApiController < ActionController::Base
         only:[:id, :name]
     })
   end
+
+  def create_resource
+    kId = params[:id].to_i
+    rtypeRaw = params[:resourceType].to_s
+    rname = params[:name].to_s
+    rtype = 0
+    if rname != nil && rname != ''
+      if rtypeRaw == "command"
+        rtype =0
+      else
+        rtype =1
+      end
+      newResource = Resource.create(:rtype => rtype, :name => rname)
+      Mapper.create(:keyword_id => kId, :resource_id => newResource.id)
+    end
+    keyword = Keyword.find(params[:id].to_i)
+    render :json => keyword.as_json(
+      {
+        methods: [:commands,:files],
+        only:[:id, :name]
+    })
+  end
 end

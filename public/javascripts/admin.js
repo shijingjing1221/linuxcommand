@@ -7,7 +7,22 @@ adminApp.factory("KeywordsApi", function($resource) {
     }, {});
 });
 
-adminApp.controller("AdminController", function($scope, KeywordsApi) {
+adminApp.factory("ResourcesApi", function($resource) {
+    return $resource('/api' + '/keywords/:id' + '/resources/:resourceType', {
+        id: '@id',
+        resourceType: '@resourceType'
+    }, {
+        CreateNewResource: {
+            method: "POST",
+            data: {
+                name: ""
+            }
+        }
+    });
+});
+
+
+adminApp.controller("AdminController", function($scope, KeywordsApi, ResourcesApi) {
     $scope.title = "Select a keyword to edit";
 
     $scope.keywordNames = KeywordsApi.query({
@@ -16,7 +31,7 @@ adminApp.controller("AdminController", function($scope, KeywordsApi) {
     $scope.keyword = {};
     $scope.keyword.selected = undefined;
     $scope.currentContent = undefined;
-    $scope.newfile = null;
+    $scope.newFile = null;
 
     $scope.$watch('keyword.selected', function(item) {
         if (item == null || item.id == null)
@@ -29,19 +44,48 @@ adminApp.controller("AdminController", function($scope, KeywordsApi) {
     });
 
     $scope.addNewFile = function() {
-        $scope.currentContent.files.push({
+        var files = $scope.currentContent.files;
+        var newFile = $scope.newFile;
+        var result = _.find(files, _.matchesProperty('name', newFile));
+        if (result != undefined) {
+            $scope.newFile = null;
+            return;
+        }
+        files.push({
             id: null,
-            name: $scope.newfile
+            name: newFile
         });
-        $scope.newfile = null;
+        $scope.newFile = null;
+        ResourcesApi.CreateNewResource({
+            id: $scope.keyword.selected.id,
+            resourceType: "file",
+            name: newFile
+        }).$promise.then(function(data) {
+            $scope.currentContent = data;
+        });
     };
 
     $scope.addNewCommand = function() {
-        $scope.currentContent.commands.push({
+        var commands = $scope.currentContent.commands;
+        var newCommand = $scope.newCommand;
+        var result = _.find(commands, _.matchesProperty('name', newCommand));
+        if (result != undefined) {
+            $scope.newCommand = null;
+            return;
+        }
+        commands.push({
             id: null,
-            name: $scope.newCommand
+            name: newCommand
         });
         $scope.newCommand = null;
+        ResourcesApi.CreateNewResource({
+            id: $scope.keyword.selected.id,
+            resourceType: "command",
+            name: newCommand
+        }).$promise.then(function(data) {
+            $scope.currentContent = data;
+        });
+
     };
 
 
