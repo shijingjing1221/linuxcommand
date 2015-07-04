@@ -60,5 +60,6 @@ RailsApp::Application.routes.draw do
   resources :keywords
   get "/api/keywords/:id", to: 'api#get_keyword'
   get "/api/keywords",     to: 'api#get_keywords'
+  post "/api/keywords",    to: 'api#create_keyword'
   post "/api/keywords/:id/resources/:resourceType/",    to: 'api#create_resource'
 end

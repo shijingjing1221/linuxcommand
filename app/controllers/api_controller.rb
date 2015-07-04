@@ -19,6 +19,15 @@ class ApiController < ActionController::Base
     })
   end
 
+  def create_keyword
+    keyword = Keyword.create(:name => params[:name].to_s)
+    render :json => keyword.as_json(
+      {
+        methods: [:commands,:files],
+        only:[:id, :name]
+    })
+  end
+
   def create_resource
     kId = params[:id].to_i
     rtypeRaw = params[:resourceType].to_s

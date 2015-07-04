@@ -4,7 +4,14 @@ var adminApp = angular.module("adminApp", ['ui.select', 'ngResource', 'ngClipboa
 adminApp.factory("KeywordsApi", function($resource) {
     return $resource('/api' + '/keywords/:id', {
         id: '@id'
-    }, {});
+    }, {
+        CreateNewKeyword: {
+            method: "POST",
+            data: {
+                name: ""
+            }
+        }
+    });
 });
 
 adminApp.factory("ResourcesApi", function($resource) {
@@ -23,7 +30,8 @@ adminApp.factory("ResourcesApi", function($resource) {
 
 
 adminApp.controller("AdminController", function($scope, KeywordsApi, ResourcesApi) {
-    $scope.title = "Select a keyword to edit";
+    $scope.title = "Select edited keyword";
+    $scope.selectPlaceHolder = "Select a keyword to edit";
 
     $scope.keywordNames = KeywordsApi.query({
         name_only: true
@@ -86,6 +94,31 @@ adminApp.controller("AdminController", function($scope, KeywordsApi, ResourcesAp
             $scope.currentContent = data;
         });
 
+    };
+
+    $scope.addNewKeyword = function() {
+        var newKeyword = $scope.newKeyword;
+        var keywords = $scope.keywordNames;
+        var result = _.find(keywords, _.matchesProperty('name', newKeyword));
+        if (result != undefined) {
+            $scope.newKeyword = null;
+            alert("This keyword is existed!");
+            return;
+        }
+        var keywordObj = {
+            id: null,
+            name: newKeyword
+        };
+        keywords.push(keywordObj);
+        $scope.keyword.selected = keywordObj;
+        $scope.creating = false;
+
+        KeywordsApi.CreateNewKeyword({
+            name: newKeyword
+        }).$promise.then(function(data) {
+            keywordObj.id = data.id;
+            $scope.currentContent = data;
+        });
     };
 
 

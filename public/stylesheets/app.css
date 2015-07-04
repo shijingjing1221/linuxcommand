@@ -90,6 +90,9 @@ ul li button{
   width: 80%;
 }
 
+.form-inline.keyword .form-group {
+  width: 90%;
+}
 .form-inline input.form-control {
   width: 100%;
 }
