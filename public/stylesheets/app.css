@@ -59,16 +59,15 @@
     color: red;
 }
 
-
 ul li.selected {
     background-color: #E8E8E8;
 }
 
-ul li.selected>span, ul li.selected>div{
+ul li.selected>span,
+ul li.selected>div {
     font-size: 2.0rem;
     font-weight: 700;
     display: block;
-
 }
 
 ul li {
@@ -76,23 +75,34 @@ ul li {
     right: 0px;
 }
 
-ul li button{
+ul li button {
     position: absolute;
     right: 0px;
     bottom: 0px;
 }
 
 .form-inline.command .form-group {
-  width: 90%;
+    width: 90%;
 }
 
 .form-inline.file .form-group {
-  width: 80%;
+    width: 80%;
 }
 
 .form-inline.keyword .form-group {
-  width: 90%;
+    width: 90%;
 }
+
 .form-inline input.form-control {
-  width: 100%;
+    width: 100%;
+}
+
+button.contribute {
+    height: 100px;
+    width: 100px;
+    border-radius: 100px;
+    border: 1px solid white;
+    position: absolute;
+    left: 0px;
+    top: 0px;
 }

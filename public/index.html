@@ -34,8 +34,12 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
+     
+                </div>
             </div>
-        </div>
+            <form action="/admin">
+            <button type="submit " class="contribute btn-primary">Contribute your knowledge</button>
+        </form>
     </header>
     <div class="container">
         <div class="center-block" ng-show="loading">
@@ -56,9 +60,9 @@
                                 <li ng-repeat="command in keyword.commands" ng-mouseleave="myClass=''" ng-mouseenter="myClass='selected'" ng-class="myClass">
                                     <span>{{command.name}}</span>
                                     <div ng-if="myClass=='selected'">
-                                    <br />
-                                    <button class="btn btn-info btn-xs right" clip-copy="command.name" popover-placement="top" popover="Copied!">copy</button>
-                                </div>
+                                        <br />
+                                        <button class="btn btn-info btn-xs right" clip-copy="command.name" popover-placement="top" popover="Copied!">copy</button>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -74,10 +78,9 @@
                                 <li ng-repeat="file in keyword.files" ng-mouseleave="myClass=''" ng-mouseenter="myClass='selected'" ng-class="myClass">
                                     <div>{{file.name}}</div>
                                     <div ng-if="myClass=='selected'">
-                                    <br />
-                                    <button class="btn btn-success btn-xs right" clip-copy="file.name" popover-placement="top" popover="Copied!">copy</button>
-                                </div>
-                               
+                                        <br />
+                                        <button class="btn btn-success btn-xs right" clip-copy="file.name" popover-placement="top" popover="Copied!">copy</button>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
