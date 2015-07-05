@@ -21,11 +21,12 @@
     }
 }
 
+
 .sfbgg {
     background-color: #f1f1f1;
     border-bottom: 1px solid #666;
     border-color: #e5e5e5;
-    height: 69px;
+    height: 90px;
 }
 
 .navbar>.container>.row {
@@ -81,28 +82,19 @@ ul li button {
     bottom: 0px;
 }
 
-.form-inline.command .form-group {
-    width: 90%;
-}
 
-.form-inline.file .form-group {
-    width: 80%;
-}
-
-.form-inline.keyword .form-group {
-    width: 90%;
-}
-
-.form-inline input.form-control {
-    width: 100%;
-}
-
-button.contribute {
+button.round {
     height: 100px;
     width: 100px;
     border-radius: 100px;
     border: 1px solid white;
     position: absolute;
-    left: 0px;
+    right: 0px;
     top: 0px;
+}
+
+button.ellipse {
+    border-radius: 10px;
+    border: 1px solid white;
+    position: absolute;
 }

@@ -22,8 +22,8 @@
     <header class="navbar navbar-static-top bs-docs-nav sfbgg" id="top" role="banner">
         <div class="container">
             <div class="row">
-                <div class="col-sm-2">
-                    <label class="pull-right"> {{title}}:</label>
+                <div class="col-sm-12">
+                    <label class="full-width"> {{title}}:</label>
                 </div>
                 <div class="col-sm-10">
                     <ui-select class="full-width" on-remove="removeKeyword($item, $model)" on-select="addKeyword($item, $model)" theme="bootstrap" close-on-select="true" multiple="" ng-model="keywords.wanted">
@@ -34,12 +34,13 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
-     
+                <div class="col-sm-2">
                 </div>
             </div>
             <form action="/admin">
-            <button type="submit " class="contribute btn-primary">Contribute your knowledge</button>
-        </form>
+                <button type="submit " class="round btn-success">Contribute your knowledge</button>
+            </form>
+        </div>
     </header>
     <div class="container">
         <div class="center-block" ng-show="loading">

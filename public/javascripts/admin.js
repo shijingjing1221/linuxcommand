@@ -30,7 +30,8 @@ adminApp.factory("ResourcesApi", function($resource) {
 
 
 adminApp.controller("AdminController", function($scope, KeywordsApi, ResourcesApi) {
-    $scope.title = "Select edited keyword";
+    $scope.titleForEdit = "Select a keyword to edit";
+    $scope.titleForCreate = "Input a keyword to create";
     $scope.selectPlaceHolder = "Select a keyword to edit";
 
     $scope.keywordNames = KeywordsApi.query({

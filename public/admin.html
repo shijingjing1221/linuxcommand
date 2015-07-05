@@ -22,10 +22,13 @@
     <header class="navbar navbar-static-top bs-docs-nav sfbgg" id="top" role="banner">
         <div class="container">
             <div class="row" ng-show="creating != true">
-                <div class="col-sm-2">
-                    <label class="pull-right"> {{title}}:</label>
-                </div>
                 <div class="col-sm-10">
+                    <label class="full-width"> {{titleForEdit}}:</label>
+                </div>
+                <div class="col-sm-2">
+                    <a class="pull-right" ng-click="creating = true">Create new keyword &gt;&gt;</a>
+                </div>
+                <div class="col-sm-12">
                     <ui-select ng-model="keyword.selected" theme="bootstrap" ng-disabled="disabled" reset-search-input="false" class="full-width">
                         <ui-select-match placeholder="{{selectPlaceHolder}}...">{{$select.selected.name}}</ui-select-match>
                         <ui-select-choices repeat="keyword in keywordNames | filter:$select.search">
@@ -33,26 +36,26 @@
                         </ui-select-choices>
                     </ui-select>
                 </div>
-                <div class="col-sm-12">
-                    <a class="pull-right" ng-click="creating = true">Create new keyword &gt;&gt;</a>
-                </div>
             </div>
             <div class="row" ng-show="creating == true">
-                <div class="col-sm-12">
-                    <form class="form-inline keyword">
-                        <div class="form-group">
-                            <input ng-model="newKeyword" type="text" class="form-control full-width" placeholder="Input new keyword">
-                        </div>
-                        <button ng-click="addNewKeyword()" type="button" class="btn btn-danger btn-sm">Add</button>
-                    </form>
+                <div class="col-sm-10">
+                    <label class="full-width"> {{titleForCreate}}:</label>
+                </div>
+                <div class="col-sm-2">
+                    <a class="pull-right" ng-click="creating = false">Back to edit page &lt;&lt;</a>
                 </div>
                 <div class="col-sm-12">
-                    <a class="pull-right" ng-click="creating = false">Cancel &lt;&lt;</a>
+                    <div class="input-group">
+                        <input ng-model="newKeyword" type="text" class="form-control" placeholder="Input new keyword">
+                        <span class="input-group-btn">
+                            <button ng-click="addNewKeyword()" class="btn btn-danger" type="button">Create</button>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
-    <div class="container" ng-show="keyword.selected.name">
+    <div class="container" ng-show="creating != true && keyword.selected.name">
         <div class="center-block" ng-show="loading">
             <button class="btn btn-default"><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...</button>
         </div>
@@ -66,12 +69,12 @@
                             <h3 class="panel-title ">Commands</h3>
                         </div>
                         <div class="panel-body">
-                            <form class="form-inline command">
-                                <div class="form-group">
-                                    <input ng-model="newCommand" type="text" class="form-control full-width" placeholder="Input new command">
-                                </div>
-                                <button ng-click="addNewCommand()" type="button" class="btn btn-danger btn-sm">Add</button>
-                            </form>
+                            <div class="input-group">
+                                <input ng-model="newCommand" type="text" class="form-control" placeholder="Input new command">
+                                <span class="input-group-btn">
+                                    <button ng-click="addNewCommand()" class="btn btn-danger" type="button">Add</button>
+                                </span>
+                            </div>
                             <br />
                             <div class="row">
                                 <ul>
@@ -93,12 +96,12 @@
                             <h3 class="panel-title ">Configuration file</h3>
                         </div>
                         <div class="panel-body">
-                            <form class="form-inline file">
-                                <div class="form-group">
-                                    <input ng-model="newFile" type="text" class="form-control" placeholder="Input new file">
-                                </div>
-                                <button ng-click="addNewFile()" type="button" class="btn btn-danger btn-sm">Add</button>
-                            </form>
+                            <div class="input-group">
+                                <input ng-model="newFile" type="text" class="form-control" placeholder="Input new file">
+                                <span class="input-group-btn">
+                                    <button ng-click="addNewFile()" class="btn btn-danger" type="button">Add</button>
+                                </span>
+                            </div>
                             <br />
                             <div class="row">
                                 <ul>
