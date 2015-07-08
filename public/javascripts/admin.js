@@ -22,7 +22,8 @@ adminApp.factory("ResourcesApi", function($resource) {
         CreateNewResource: {
             method: "POST",
             data: {
-                name: ""
+                name: "",
+                note: ""
             }
         }
     });
@@ -55,20 +56,25 @@ adminApp.controller("AdminController", function($scope, KeywordsApi, ResourcesAp
     $scope.addNewFile = function() {
         var files = $scope.currentContent.files;
         var newFile = $scope.newFile;
+        var newFileNote = $scope.newFileNote;
         var result = _.find(files, _.matchesProperty('name', newFile));
         if (result != undefined) {
             $scope.newFile = null;
+            $scope.newFileNote = null;
             return;
         }
         files.push({
             id: null,
-            name: newFile
+            name: newFile,
+            note: newFileNote
         });
         $scope.newFile = null;
+        $scope.newFileNote = null;
         ResourcesApi.CreateNewResource({
             id: $scope.keyword.selected.id,
             resourceType: "file",
-            name: newFile
+            name: newFile,
+            note: newFileNote
         }).$promise.then(function(data) {
             $scope.currentContent = data;
         });
@@ -77,20 +83,25 @@ adminApp.controller("AdminController", function($scope, KeywordsApi, ResourcesAp
     $scope.addNewCommand = function() {
         var commands = $scope.currentContent.commands;
         var newCommand = $scope.newCommand;
+        var newCommandNote = $scope.newCommandNote;
         var result = _.find(commands, _.matchesProperty('name', newCommand));
         if (result != undefined) {
             $scope.newCommand = null;
+            $scope.newCommandNote = null;
             return;
         }
         commands.push({
             id: null,
-            name: newCommand
+            name: newCommand,
+            note: newCommandNote
         });
         $scope.newCommand = null;
+        $scope.newCommandNote = null;
         ResourcesApi.CreateNewResource({
             id: $scope.keyword.selected.id,
             resourceType: "command",
-            name: newCommand
+            name: newCommand,
+            note: newCommandNote
         }).$promise.then(function(data) {
             $scope.currentContent = data;
         });

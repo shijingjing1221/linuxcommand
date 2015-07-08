@@ -76,12 +76,18 @@
                                 </span>
                             </div>
                             <br />
+<div class="input-group full-width">
+    <textarea placeholder="Leave some note for your command..." class="full-width" ng-model="newCommandNote"></textarea>
+                        </div>
+
+                            <br />
                             <div class="row">
                                 <ul>
                                     <li ng-repeat="command in currentContent.commands" ng-mouseleave="myClass=''" ng-mouseenter="myClass='selected'" ng-class="myClass">
                                         <span>{{command.name}}</span>
                                         <div ng-if="myClass=='selected'">
                                             <br />
+                                            <p class="desc">{{command.note}}</p>
                                             <button class="btn btn-info btn-xs right" clip-copy="command.name" popover-placement="top" popover="Copied!">copy</button>
                                         </div>
                                     </li>
@@ -102,6 +108,10 @@
                                     <button ng-click="addNewFile()" class="btn btn-danger" type="button">Add</button>
                                 </span>
                             </div>
+                                                        <br />
+<div class="input-group full-width">
+    <textarea placeholder="Leave some note for your file..." class="full-width" ng-model="newFileNote"></textarea>
+                        </div>
                             <br />
                             <div class="row">
                                 <ul>
@@ -109,6 +119,7 @@
                                         <span>{{file.name}}</span>
                                         <div ng-if="myClass=='selected'">
                                             <br />
+                                            <p class="desc">{{file.note}}</p>
                                             <button class="btn btn-success btn-xs right" clip-copy="file.name" popover-placement="top" popover="Copied!">copy</button>
                                         </div>
                                     </li>

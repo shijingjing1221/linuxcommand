@@ -71,6 +71,13 @@ ul li.selected>div {
     display: block;
 }
 
+ul li.selected>div .desc {
+    font-size: 1.25rem;
+    font-weight: 500;
+    display: block;
+    font-style:italic;
+}
+
 ul li {
     position: relative;
     right: 0px;
@@ -97,4 +104,12 @@ button.ellipse {
     border-radius: 10px;
     border: 1px solid white;
     position: absolute;
+}
+
+.input-group.full-width{
+    width: 100%;
+}
+
+.input-group.full-width textarea.full-width{
+    width: 100%;
 }

@@ -32,6 +32,7 @@ class ApiController < ActionController::Base
     kId = params[:id].to_i
     rtypeRaw = params[:resourceType].to_s
     rname = params[:name].to_s
+    note = params[:note].to_s
     rtype = 0
     if rname != nil && rname != ''
       if rtypeRaw == "command"
@@ -39,7 +40,7 @@ class ApiController < ActionController::Base
       else
         rtype =1
       end
-      newResource = Resource.create(:rtype => rtype, :name => rname)
+      newResource = Resource.create(:rtype => rtype, :name => rname, :note => note)
       Mapper.create(:keyword_id => kId, :resource_id => newResource.id)
     end
     keyword = Keyword.find(params[:id].to_i)
