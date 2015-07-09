@@ -31,12 +31,17 @@ adminApp.factory("ResourcesApi", function($resource) {
 
 
 adminApp.controller("AdminController", function($scope, KeywordsApi, ResourcesApi) {
+    $scope.loadingContent = "Loading the keywords from server...";
+    $scope.loading = true;
+
     $scope.titleForEdit = "Select a keyword to edit";
     $scope.titleForCreate = "Input a keyword to create";
     $scope.selectPlaceHolder = "Select a keyword to edit";
 
     $scope.keywordNames = KeywordsApi.query({
         name_only: true
+    }, function(data) {
+        $scope.loading = false;
     });
     $scope.keyword = {};
     $scope.keyword.selected = undefined;
