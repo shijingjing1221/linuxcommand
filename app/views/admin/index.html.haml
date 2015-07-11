@@ -1,0 +1,74 @@
+%header#top.navbar.navbar-static-top.bs-docs-nav.sfbgg{:role => "banner"}
+  .container
+    .row{"ng-show" => "creating != true"}
+      .col-sm-10
+        %label.full-width {{titleForEdit}}:
+      .col-sm-2
+        %a.pull-right{"ng-click" => "creating = true"} Create new keyword &gt;&gt;
+      .col-sm-12
+        %ui-select.full-width{"ng-disabled" => "disabled", "ng-model" => "keyword.selected", "reset-search-input" => "false", :theme => "bootstrap"}
+          %ui-select-match{:placeholder => "{{selectPlaceHolder}}..."} {{$select.selected.name}}
+          %ui-select-choices{:repeat => "keyword in keywordNames | filter:$select.search"}
+            {{keyword.name}}
+    .row{"ng-show" => "creating == true"}
+      .col-sm-10
+        %label.full-width {{titleForCreate}}:
+      .col-sm-2
+        %a.pull-right{"ng-click" => "creating = false"} Back to edit page &lt;&lt;
+      .col-sm-12
+        .input-group
+          %input.form-control{"ng-model" => "newKeyword", :placeholder => "Input new keyword", :type => "text"}
+            %span.input-group-btn
+              %button.btn.btn-danger{"ng-click" => "addNewKeyword()", :type => "button"} Create
+.container{"ng-show" => "loading"}
+  .center-block
+    %button.btn.btn-default
+      %span.glyphicon.glyphicon-refresh.glyphicon-refresh-animate
+      {{loadingContent}}
+.container{"ng-show" => "creating != true && keyword.selected.name"}
+  .bs-callout
+    %h4
+      {{currentContent.name}}
+    .row
+      .col-sm-8
+        .panel.panel-info
+          .panel-heading
+            %h3.panel-title Commands
+          .panel-body
+            .input-group
+              %input.form-control{"ng-model" => "newCommand", :placeholder => "Input new command", :type => "text"}
+                %span.input-group-btn
+                  %button.btn.btn-danger{"ng-click" => "addNewCommand()", :type => "button"} Add
+            %br/
+            .input-group.full-width
+              %textarea.full-width{"ng-model" => "newCommandNote", :placeholder => "Leave some note for your command..."}
+            %br/
+            .row
+              %ul
+                %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "command in currentContent.commands"}
+                  %span {{command.name}}
+                  %div{"ng-if" => "myClass=='selected'"}
+                    %br/
+                    %p.desc {{command.note}}
+                    %button.btn.btn-info.btn-xs.right{"clip-copy" => "command.name", :popover => "Copied!", "popover-placement" => "top"} copy
+      .col-sm-4
+        .panel.panel-success
+          .panel-heading
+            %h3.panel-title Configuration file
+          .panel-body
+            .input-group
+              %input.form-control{"ng-model" => "newFile", :placeholder => "Input new file", :type => "text"}
+                %span.input-group-btn
+                  %button.btn.btn-danger{"ng-click" => "addNewFile()", :type => "button"} Add
+            %br/
+            .input-group.full-width
+              %textarea.full-width{"ng-model" => "newFileNote", :placeholder => "Leave some note for your file..."}
+            %br/
+            .row
+              %ul
+                %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "file in currentContent.files"}
+                  %span {{file.name}}
+                  %div{"ng-if" => "myClass=='selected'"}
+                    %br/
+                    %p.desc {{file.note}}
+                    %button.btn.btn-success.btn-xs.right{"clip-copy" => "file.name", :popover => "Copied!", "popover-placement" => "top"} copy

@@ -18,6 +18,7 @@ group :development, :test do
   gem 'sqlite3'
   gem 'minitest'
   gem 'thor', '= 0.14.6'
+  gem 'haml-rails'
 end
 
 # Gems used only for assets and not required
@@ -33,6 +34,8 @@ group :assets do
 end
 
 gem 'jquery-rails'
+
+gem 'haml'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'

@@ -1,5 +1,5 @@
 RailsApp::Application.routes.draw do
-  get "key/index"
+  #get "key/index"
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
@@ -57,6 +57,9 @@ RailsApp::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
+  require Rails.root.join('config', 'initializers', 'myapp.rb')
+  get "/", to: 'application#index'
+  get "/admin", to: 'admin#index'
   resources :keywords
   get "/api/keywords/:id", to: 'api#get_keyword'
   get "/api/keywords",     to: 'api#get_keywords'
