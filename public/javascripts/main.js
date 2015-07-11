@@ -10,7 +10,7 @@ mainApp.factory("KeywordsApi", function($resource) {
 mainApp.controller("MainController", function($scope, KeywordsApi) {
     $scope.loadingContent = "Loading the keywords from server...";
     $scope.loading = true;
-    $scope.title = "Command search ";
+    $scope.title = "Linux command search ";
 
     $scope.keywordNames = KeywordsApi.query({
         name_only: true
