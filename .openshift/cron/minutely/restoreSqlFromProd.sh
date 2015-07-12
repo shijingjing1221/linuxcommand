@@ -15,11 +15,17 @@ if [ $appName == "command" ]; then
 	exit 0;
 fi
 
+deleteDatabase() {
+	mysql -h $OPENSHIFT_MYSQL_DB_HOST -P ${OPENSHIFT_MYSQL_DB_PORT:-3306} -u ${OPENSHIFT_MYSQL_DB_USERNAME:-'admin'} --password="$OPENSHIFT_MYSQL_DB_PASSWORD" -D $OPENSHIFT_APP_NAME -e "DROP TABLE keywords; DROP TABLE mappers; DROP TABLE resources; " 
+
+}
+
 restoreFromSql() {
    if [ ! -s "$2" ]; then
    	echo "The SQL script $2 is NOT existed or empty"
    	exit 1;
    fi
+   deleteDatabase
    mysql -h $OPENSHIFT_MYSQL_DB_HOST -P ${OPENSHIFT_MYSQL_DB_PORT:-3306} -u ${OPENSHIFT_MYSQL_DB_USERNAME:-'admin'} --password="$OPENSHIFT_MYSQL_DB_PASSWORD"  $1  < $2
 }
 
@@ -35,14 +41,10 @@ copySqlFromProd() {
 	return $?
 }
 
-deleteDatabase() {
-	mysql -h $OPENSHIFT_MYSQL_DB_HOST -P ${OPENSHIFT_MYSQL_DB_PORT:-3306} -u ${OPENSHIFT_MYSQL_DB_USERNAME:-'admin'} --password="$OPENSHIFT_MYSQL_DB_PASSWORD" -D $OPENSHIFT_APP_NAME -e "DROP TABLE keywords; DROP TABLE mappers; DROP TABLE resources; " 
 
-}
 copySqlFromProd "$prodSqlFolder" "$prodHost" "$remoteBackupSqlFolder/$backupSqlFile"
 if [ $? -ne 0 ]; then
 	echo "No backup SQL file on PROD, will exit this script"
 	exit 1;
 fi
-deleteDatabase
 restoreFromSql $appName $prodSqlFolder/$backupSqlFile
