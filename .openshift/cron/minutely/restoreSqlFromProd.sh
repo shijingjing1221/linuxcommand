@@ -3,7 +3,7 @@
 yesterday=$(date +"%Y-%m-%d" --date='-1 day')
 backupSqlFile=BackupSql${yesterday}.sql
 remoteBackupSqlFolder=app-root/data/tmp
-prodSqlFolder=~/app-root/data/prod
+prodSqlFolder=${OPENSHIFT_DATA_DIR}prod/
 appName=$OPENSHIFT_APP_NAME
 #	PROD www.linuxcommand.com
 prodHost=555eeb2c5973ca5b2d000045@command-sjj.rhcloud.com
@@ -37,7 +37,8 @@ copySqlFromProd() {
 		echo "Folder "$1" is existed, will delete all the file in it"
 		rm -f $1/*
 	fi
-	scp $2:$3 $1
+	scp -i ${OPENSHIFT_DATA_DIR}.ssh/id_rsa -o StrictHostKeyChecking=no -o "UserKnownHostsFile=${OPENSHIFT_DATA_DIR}.ssh/known_hosts"  $2:$3 $1
+
 	return $?
 }
 
