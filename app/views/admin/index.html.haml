@@ -5,9 +5,9 @@
 
   .container
     .row{"ng-show" => "creating != true"}
-      .col-sm-10
+      .col-sm-6
         %label.full-width {{titleForEdit}}:
-      .col-sm-2
+      .col-sm-6
         %a.pull-right{"ng-click" => "creating = true"} Create new keyword &gt;&gt;
       .col-sm-12
         %ui-select.full-width{"ng-disabled" => "disabled", "ng-model" => "keyword.selected", "reset-search-input" => "false", :theme => "bootstrap"}
@@ -15,9 +15,9 @@
           %ui-select-choices{:repeat => "keyword in keywordNames | filter:$select.search"}
             {{keyword.name}}
     .row{"ng-show" => "creating == true"}
-      .col-sm-10
+      .col-sm-6
         %label.full-width {{titleForCreate}}:
-      .col-sm-2
+      .col-sm-6
         %a.pull-right{"ng-click" => "creating = false"} Back to edit page &lt;&lt;
       .col-sm-12
         .input-group

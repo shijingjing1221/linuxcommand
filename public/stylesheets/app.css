@@ -113,3 +113,8 @@ button.ellipse {
 .input-group.full-width textarea.full-width{
     width: 100%;
 }
+
+/*@media (min-width: 768px)*/
+.navbar .navbar-header {
+  max-width: 2%;
+}
