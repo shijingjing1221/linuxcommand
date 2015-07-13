@@ -16,8 +16,12 @@ if [ $appName == "command" ]; then
 fi
 
 deleteDatabase() {
-	mysql -h $OPENSHIFT_MYSQL_DB_HOST -P ${OPENSHIFT_MYSQL_DB_PORT:-3306} -u ${OPENSHIFT_MYSQL_DB_USERNAME:-'admin'} --password="$OPENSHIFT_MYSQL_DB_PASSWORD" -D $OPENSHIFT_APP_NAME -e "DROP TABLE keywords; DROP TABLE mappers; DROP TABLE resources; " 
-
+	sqlForDeleteDB="DROP DATABASE $appName;"
+	sqlForCreateDB="CREATE DATABASE $appName DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;"
+	mysql -h $OPENSHIFT_MYSQL_DB_HOST -P ${OPENSHIFT_MYSQL_DB_PORT:-3306} -u ${OPENSHIFT_MYSQL_DB_USERNAME:-'admin'} --password="$OPENSHIFT_MYSQL_DB_PASSWORD" -e "$sqlForDeleteDB $sqlForCreateDB"
+	if [ $? -ne 0 ]; then
+		mysql -h $OPENSHIFT_MYSQL_DB_HOST -P ${OPENSHIFT_MYSQL_DB_PORT:-3306} -u ${OPENSHIFT_MYSQL_DB_USERNAME:-'admin'} --password="$OPENSHIFT_MYSQL_DB_PASSWORD" -e "$sqlForCreateDB"
+	fi
 }
 
 restoreFromSql() {
