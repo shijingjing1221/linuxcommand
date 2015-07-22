@@ -21,7 +21,6 @@
     }
 }
 
-
 .sfbgg {
     background-color: #f1f1f1;
     border-bottom: 1px solid #666;
@@ -75,7 +74,7 @@ ul li.selected>div .desc {
     font-size: 1.25rem;
     font-weight: 500;
     display: block;
-    font-style:italic;
+    font-style: italic;
 }
 
 ul li {
@@ -88,7 +87,6 @@ ul li button {
     right: 0px;
     bottom: 0px;
 }
-
 
 button.round {
     height: 100px;
@@ -106,15 +104,26 @@ button.ellipse {
     position: absolute;
 }
 
-.input-group.full-width{
+.input-group.full-width {
     width: 100%;
 }
 
-.input-group.full-width textarea.full-width{
+.input-group.full-width textarea.full-width {
     width: 100%;
 }
+
 
 /*@media (min-width: 768px)*/
+
 .navbar .navbar-header {
-  max-width: 2%;
+    max-width: 2%;
+}
+
+.popover {
+    max-width: 100%;
+}
+
+.popover code {
+    color: black;
+    background-color: white;
 }

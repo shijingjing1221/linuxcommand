@@ -28,21 +28,19 @@
             %h3.panel-title Commands
           .panel-body
             %ul
-              %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "command in keyword.commands"}
+              %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "command in keyword.commands", "popover"=> "<code>{{command.note||'Nothing...'}}</code>", "popover-placement" => "bottom", "popover-trigger"=>"mouseenter"}
                 %span {{command.name}}
                 %div{"ng-if" => "myClass=='selected'"}
                   %br/
-                  %p.desc {{command.note}}
-                  %button.btn.btn-info.btn-xs.right{"clip-copy" => "command.name", :popover => "Copied!", "popover-placement" => "top"} copy
+                  %button.btn.btn-info.btn-xs.right{"clip-copy" => "command.name", "popover" => "Copied!", "popover-placement" => "top"} copy
       .col-sm-4
         .panel.panel-success
           .panel-heading
             %h3.panel-title Configuration file
           .panel-body
             %ul
-              %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "file in keyword.files"}
+              %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "file in keyword.files", "popover"=> "<code>{{file.note||'Nothing...'}}</code>", "popover-placement" => "bottom", "popover-trigger"=>"mouseenter"}
                 %div {{file.name}}
                 %div{"ng-if" => "myClass=='selected'"}
                   %br/
-                  %p.desc {{file.note}}
                   %button.btn.btn-success.btn-xs.right{"clip-copy" => "file.name", :popover => "Copied!", "popover-placement" => "top"} copy
