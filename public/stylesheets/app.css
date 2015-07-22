@@ -85,7 +85,7 @@ ul li {
 ul li button {
     position: absolute;
     right: 0px;
-    bottom: 0px;
+    top: 0px;
 }
 
 button.round {
@@ -126,4 +126,9 @@ button.ellipse {
 .popover code {
     color: black;
     background-color: white;
+}
+
+.selected code {
+    color: black;
+    background-color: inherit;
 }
