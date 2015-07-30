@@ -119,6 +119,19 @@ button.ellipse {
     max-width: 2%;
 }
 
+header ul.navbar-nav li, 
+header ul.navbar-right li{
+    list-style: none;
+}
+header#navlink{
+    background: black;
+    color: white;
+}
+header#navlink a{
+     color: white;
+     font-weight: bold;
+   
+}
 .popover {
     max-width: 100%;
 }

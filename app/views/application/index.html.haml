@@ -1,17 +1,26 @@
+%header#navlink
+  .container
+    .navbar-header
+      %a{:href => "../"}
+        %span.glyphicon.glyphicon-home
+        HOME
+    %nav
+      %ul.navbar-nav.navbar-right
+        %li
+          %a{:href => "/admin", :target => "_blank"}
+            Contribute Your Knowledge
+            %span.glyphicon.glyphicon-triangle-right
 %header#top.navbar.navbar-static-top.bs-docs-nav.sfbgg{:role => "banner"}
   .container
     .row
-      .col-sm-12
+      .col-md-12.col-sm-12.col-xs-12
         %label.full-width {{title}}:
-      .col-sm-10
+      .col-md-12.col-sm-12.col-xs-12
         %ui-select.full-width{"close-on-select" => "true", :multiple => "", "ng-disable" => "!keywordNames", "ng-model" => "keywords.wanted", "on-remove" => "removeKeyword($item, $model)", "on-select" => "addKeyword($item, $model)", :theme => "bootstrap"}
           %ui-select-match{:placeholder => "Select a keywords..."}
             {{$item.name}}
           %ui-select-choices{:repeat => "keyword in keywordNames | filter:$select.search"}
             {{keyword.name}}
-      .col-sm-2
-    %form{:action => "/admin"}
-      %button.round.btn-success{:type => "submit "} Contribute your knowledge
 .container
   .center-block{"ng-show" => "loading"}
     %button.btn.btn-default
@@ -22,7 +31,7 @@
     %h4
       {{keyword.name}}
     .row
-      .col-sm-8
+      .col-md-8.col-sm-12.col-xs-12
         .panel.panel-info
           .panel-heading
             %h3.panel-title Commands
@@ -35,7 +44,7 @@
                   %p.desc
                     %code {{command.note}}
 
-      .col-sm-4
+      .col-md-4.col-sm-12.col-xs-12
         .panel.panel-success
           .panel-heading
             %h3.panel-title Configuration file
