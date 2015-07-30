@@ -8,10 +8,12 @@
       %ul.navbar-nav.navbar-right
         %li{"ng-show" => "creating != true"}
           %a{"ng-click" => "creating = true"}
-            Create new keyword&gt;&gt
+            Create new keyword
+            %span.glyphicon.glyphicon-triangle-right
         %li{"ng-show" => "creating == true"}
-          %a{"ng-click" => "creating = true"}
-            Back to edit page&lt;&lt;
+          %a{"ng-click" => "creating = false"}
+            Back to edit page
+            %span.glyphicon.glyphicon-triangle-left
 %header#top.navbar.navbar-static-top.bs-docs-nav.sfbgg{:role => "banner"}
   .container
     .row{"ng-show" => "creating != true"}
