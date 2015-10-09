@@ -40,7 +40,7 @@
               %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "command in keyword.commands"}
                 %span {{command.name}}
                 %div{"ng-if" => "myClass=='selected'"}
-                  %button.btn.btn-info.btn-xs.right{"clip-copy" => "command.name", "popover" => "Copied!", "popover-placement" => "top"} copy
+                  %button.btn.btn-info.btn-xs.right.copy{"clip-copy" => "command.name", "popover" => "Copied!", "popover-placement" => "top"} copy
                   %p.desc
                     %code {{command.note}}
 
@@ -53,6 +53,6 @@
               %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "file in keyword.files"}
                 %div {{file.name}}
                 %div{"ng-if" => "myClass=='selected'"}
-                  %button.btn.btn-success.btn-xs.right{"clip-copy" => "file.name", :popover => "Copied!", "popover-placement" => "top"} copy
+                  %button.btn.btn-success.btn-xs.right.copy{"clip-copy" => "file.name", :popover => "Copied!", "popover-placement" => "top"} copy
                   %p.desc
                     %code {{file.note}}

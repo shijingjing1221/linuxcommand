@@ -60,7 +60,8 @@
                 %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "command in currentContent.commands"}
                   %span {{command.name}}
                   %div{"ng-if" => "myClass=='selected'"}
-                    %button.btn.btn-info.btn-xs.right{"clip-copy" => "command.name", :popover => "Copied!", "popover-placement" => "top"} copy
+                    %button.btn.btn-info.btn-xs.right.copy{"clip-copy" => "command.name", :popover => "Copied!", "popover-placement" => "top"} copy
+                    %button.btn.btn-danger.btn-xs.right.edit{"ng-click" => "openEditor(command)", :type => "button"} edit
                     %p.desc
                       %code {{command.note}}
       .col-sm-4
@@ -81,6 +82,22 @@
                 %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "file in currentContent.files"}
                   %span {{file.name}}
                   %div{"ng-if" => "myClass=='selected'"}
-                    %button.btn.btn-success.btn-xs.right{"clip-copy" => "file.name", :popover => "Copied!", "popover-placement" => "top"} copy
+                    %button.btn.btn-success.btn-xs.right.copy{"clip-copy" => "file.name", :popover => "Copied!", "popover-placement" => "top"} copy
+                    %button.btn.btn-danger.btn-xs.right.edit{"ng-click" => "openEditor(file)", :type => "button"} edit                    
                     %p.desc
                       %code {{file.note}}
+                  %div
+                    %script{:id => "myModalContent.html", :type => "text/ng-template"}
+                      .modal-header
+                        %h3.modal-title Edit {{item.rtype === 0 ? "command": "file"}}
+                      .modal-body
+                        %form.row
+                          .form-group
+                            %label.col-xs-10.col-xs-offset-1 {{item.rtype === 0 ? "Command": "File"}} Name:
+                            %input.col-xs-10.col-xs-offset-1{"ng-disable"=>"true", "ng-model" => "item.name"}
+                          .form-group
+                            %label.col-xs-10.col-xs-offset-1 {{item.rtype === 0 ? "Command": "File"}} Comment:
+                            %textarea.col-xs-10.col-xs-offset-1{"ng-model" => "item.note", "rows"=>"4", "cols"=>"50"}
+                      .modal-footer
+                        %button.btn.btn-primary{"ng-click" => "ok()", :type => "button"} OK
+                        %button.btn.btn-warning{"ng-click" => "cancel()", :type => "button"} Cancel

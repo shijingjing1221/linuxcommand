@@ -82,9 +82,15 @@ ul li {
     right: 0px;
 }
 
-ul li button {
+ul li button.copy {
     position: absolute;
     right: 0px;
+    top: 0px;
+}
+
+ul li button.edit {
+    position: absolute;
+    right: 36px;
     top: 0px;
 }
 

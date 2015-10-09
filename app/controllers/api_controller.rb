@@ -50,4 +50,18 @@ class ApiController < ActionController::Base
         only:[:id, :name]
     })
   end
+
+  def update_resource
+    rId = params[:resourceId].to_i
+    rname = params[:name].to_s
+    note = params[:note].to_s
+    rtype = 0
+    if rname != nil && rname != ''
+      resource = Resource.find_by_id(rId)
+      resource.note = note
+      resource.name = rname
+      resource.save
+    end
+    render :json => resource.as_json()
+  end
 end

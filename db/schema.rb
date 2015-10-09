@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20150708225621) do
+ActiveRecord::Schema.define(:version => 20150728032156) do
 
   create_table "keywords", :force => true do |t|
     t.string   "name"
@@ -26,12 +26,57 @@ ActiveRecord::Schema.define(:version => 20150708225621) do
     t.datetime "updated_at",  :null => false
   end
 
+  create_table "phases", :force => true do |t|
+    t.string   "name"
+    t.string   "ptype"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "phrases", :force => true do |t|
+    t.string   "name"
+    t.datetime "startdate"
+    t.datetime "enddate"
+    t.text     "display_setting"
+    t.integer  "version_id"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+  end
+
+  create_table "products", :force => true do |t|
+    t.string   "name"
+    t.text     "display_setting"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.string   "link"
+  end
+
   create_table "resources", :force => true do |t|
     t.integer  "rtype"
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.text     "note"
+  end
+
+  create_table "version_phases", :force => true do |t|
+    t.integer  "version_id"
+    t.integer  "phase_id"
+    t.datetime "startdate"
+    t.datetime "enddate"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.string   "comment"
+  end
+
+  create_table "versions", :force => true do |t|
+    t.string   "name"
+    t.datetime "gadate"
+    t.datetime "eoldate"
+    t.text     "display_setting"
+    t.integer  "product_id"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
   end
 
 end
