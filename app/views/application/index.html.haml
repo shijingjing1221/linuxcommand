@@ -1,11 +1,15 @@
 %header#navlink
   .container
     .navbar-header
-      %a{:href => "../"}
+      %a.navbar-brand.hidden-sm{:href => "../"}
         %span.glyphicon.glyphicon-home
         HOME
-    %nav
-      %ul.navbar-nav.navbar-right
+      %div.navbar-toggle.collapsed
+        %a{:href => "/admin", :target => "_blank"}
+          Contribute Your Knowledge
+          %span.glyphicon.glyphicon-triangle-right        
+    %nav.navbar-collapse.collapse
+      %ul.navbar-nav.navbar-right.hidden-sm
         %li
           %a{:href => "/admin", :target => "_blank"}
             Contribute Your Knowledge

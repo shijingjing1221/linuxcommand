@@ -21,6 +21,11 @@
     }
 }
 
+
+.navbar-nav.navbar-right.hidden-sm{
+margin-top: 13px;
+}
+
 .sfbgg {
     background-color: #f1f1f1;
     border-bottom: 1px solid #666;

@@ -1,11 +1,18 @@
 %header#navlink
   .container
     .navbar-header
-      %a{:href => "../"}
+      %a.navbar-brand.hidden-sm{:href => "../"}
         %span.glyphicon.glyphicon-home
         HOME
-    %nav
-      %ul.navbar-nav.navbar-right
+      %div.navbar-toggle.collapsed
+        %a{"ng-show" => "creating != true", "ng-click" => "creating = true"}
+          Create new keyword
+          %span.glyphicon.glyphicon-triangle-right
+        %a{"ng-show" => "creating == true", "ng-click" => "creating = false"}
+          Back to edit page
+          %span.glyphicon.glyphicon-triangle-left
+    %nav.navbar-collapse.collapse
+      %ul.navbar-nav.navbar-right.hidden-sm
         %li{"ng-show" => "creating != true"}
           %a{"ng-click" => "creating = true"}
             Create new keyword
