@@ -29,7 +29,7 @@ angular.module("template/popover/popover.html", []).run(["$templateCache", funct
 mainApp.controller("MainController", function($scope, KeywordsApi) {
     $scope.loadingContent = "Loading the keywords from server...";
     $scope.loading = true;
-    $scope.title = "Linux command search ";
+    $scope.title = "Linux Command";
 
     $scope.keywordNames = KeywordsApi.query({
         name_only: true

@@ -3,11 +3,10 @@
     .navbar-header
       %a.navbar-brand.hidden-sm{:href => "../"}
         %span.glyphicon.glyphicon-home
-        HOME
+        {{title}}
       %div.navbar-toggle.collapsed
         %a{:href => "/admin", :target => "_blank"}
-          Contribute
-          %span.glyphicon.glyphicon-triangle-right        
+          %span.glyphicon.glyphicon-edit        
     %nav.navbar-collapse.collapse
       %ul.navbar-nav.navbar-right.hidden-sm
         %li
@@ -18,7 +17,7 @@
   .container
     .row
       .col-md-12.col-sm-12.col-xs-12
-        %label.full-width {{title}}:
+        %label.full-width Select the keywords for commands:
       .col-md-12.col-sm-12.col-xs-12
         %ui-select.full-width{"close-on-select" => "true", :multiple => "", "ng-disable" => "!keywordNames", "ng-model" => "keywords.wanted", "on-remove" => "removeKeyword($item, $model)", "on-select" => "addKeyword($item, $model)", :theme => "bootstrap"}
           %ui-select-match{:placeholder => "Select a keywords..."}

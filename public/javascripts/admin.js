@@ -65,6 +65,7 @@ angular.module("template/popover/popover.html", []).run(["$templateCache", funct
 adminApp.controller("AdminController", function ($scope, $modal, $log, KeywordsApi, ResourcesApi, ResourceApi) {
     $scope.loadingContent = "Loading the keywords from server...";
     $scope.loading = true;
+    $scope.title = "Linux Command";
 
     $scope.titleForEdit = "Select a keyword to edit";
     $scope.titleForCreate = "Input a keyword to create";
