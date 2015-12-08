@@ -53,15 +53,16 @@
         .panel.panel-info
           .panel-heading
             %h3.panel-title Commands
+            %button.btn.btn-danger.btn-xs.right.edit{"ng-click" => "openCreator('command')", :type => "button"} Add
           .panel-body
-            .input-group
-              %input.form-control{"ng-model" => "newCommand", :placeholder => "Input new command", :type => "text"}
-                %span.input-group-btn
-                  %button.btn.btn-danger{"ng-click" => "addNewCommand()", :type => "button"} Add
-            %br/
-            .input-group.full-width
-              %textarea.full-width{"ng-model" => "newCommandNote", :placeholder => "Leave some note for your command..."}
-            %br/
+            / .input-group
+            /   %input.form-control{"ng-model" => "newCommand", :placeholder => "Input new command", :type => "text"}
+            /     %span.input-group-btn
+            /       %button.btn.btn-danger{"ng-click" => "addNewCommand()", :type => "button"} Add
+            / %br/
+            / .input-group.full-width
+            /   %textarea.full-width{"ng-model" => "newCommandNote", :placeholder => "Leave some note for your command..."}
+            / %br/
             .row
               %ul
                 %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "command in currentContent.commands"}
@@ -75,15 +76,16 @@
         .panel.panel-success
           .panel-heading
             %h3.panel-title Configuration file
+            %button.btn.btn-danger.btn-xs.right.edit{"ng-click" => "openCreator('file')", :type => "button"} Add
           .panel-body
-            .input-group
-              %input.form-control{"ng-model" => "newFile", :placeholder => "Input new file", :type => "text"}
-                %span.input-group-btn
-                  %button.btn.btn-danger{"ng-click" => "addNewFile()", :type => "button"} Add
-            %br/
-            .input-group.full-width
-              %textarea.full-width{"ng-model" => "newFileNote", :placeholder => "Leave some note for your file..."}
-            %br/
+            / .input-group
+            /   %input.form-control{"ng-model" => "newFile", :placeholder => "Input new file", :type => "text"}
+            /     %span.input-group-btn
+            /       %button.btn.btn-danger{"ng-click" => "addNewFile()", :type => "button"} Add
+            / %br/
+            / .input-group.full-width
+            /   %textarea.full-width{"ng-model" => "newFileNote", :placeholder => "Leave some note for your file..."}
+            / %br/
             .row
               %ul
                 %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "file in currentContent.files"}
@@ -94,7 +96,7 @@
                     %p.desc
                       %code {{file.note}}
                   %div
-                    %script{:id => "myModalContent.html", :type => "text/ng-template"}
+                    %script{:id => "EditorModalContent.html", :type => "text/ng-template"}
                       .modal-header
                         %h3.modal-title Edit {{item.rtype === 0 ? "command": "file"}}
                       .modal-body
@@ -102,6 +104,22 @@
                           .form-group
                             %label.col-xs-10.col-xs-offset-1 {{item.rtype === 0 ? "Command": "File"}} Name:
                             %input.col-xs-10.col-xs-offset-1{"ng-disable"=>"true", "ng-model" => "item.name"}
+                          .form-group
+                            %label.col-xs-10.col-xs-offset-1 {{item.rtype === 0 ? "Command": "File"}} Comment:
+                            %textarea.col-xs-10.col-xs-offset-1{"ng-model" => "item.note", "rows"=>"4", "cols"=>"50"}
+                      .modal-footer
+                        %button.btn.btn-primary{"ng-click" => "ok()", :type => "button"} OK
+                        %button.btn.btn-warning{"ng-click" => "cancel()", :type => "button"} Cancel
+
+                  %div
+                    %script{:id => "CreatorModalContent.html", :type => "text/ng-template"}
+                      .modal-header
+                        %h3.modal-title Add new {{item.rtype === 0 ? "command": "file"}}
+                      .modal-body
+                        %form.row
+                          .form-group
+                            %label.col-xs-10.col-xs-offset-1 {{item.rtype === 0 ? "Command": "File"}} Name:
+                            %input.col-xs-10.col-xs-offset-1{"ng-model" => "item.name"}
                           .form-group
                             %label.col-xs-10.col-xs-offset-1 {{item.rtype === 0 ? "Command": "File"}} Comment:
                             %textarea.col-xs-10.col-xs-offset-1{"ng-model" => "item.note", "rows"=>"4", "cols"=>"50"}
