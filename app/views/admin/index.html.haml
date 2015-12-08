@@ -3,7 +3,7 @@
     .navbar-header
       %a.navbar-brand.hidden-sm{:href => "../"}
         %span.glyphicon.glyphicon-home
-        HOME
+        {{title}}
       %div.navbar-toggle.collapsed
         %a{"ng-show" => "creating != true", "ng-click" => "creating = true"}
           Create keyword
@@ -25,7 +25,7 @@
   .container
     .row{"ng-show" => "creating != true"}
       .col-sm-12
-        %label.full-width {{titleForEdit}}:
+        %label.full-width {{titleForSearch}}:
       .col-sm-12
         %ui-select.full-width{"ng-disabled" => "disabled", "ng-model" => "keyword.selected", "reset-search-input" => "false", :theme => "bootstrap"}
           %ui-select-match{:placeholder => "{{selectPlaceHolder}}..."} {{$select.selected.name}}
@@ -36,7 +36,7 @@
         %label.full-width {{titleForCreate}}:
       .col-sm-12
         .input-group
-          %input.form-control{"ng-model" => "newKeyword", :placeholder => "Input new keyword", :type => "text"}
+          %input.form-control{"ng-model" => "newKeyword", :placeholder => "Input new keyword, e.g. NFS, DNS", :type => "text"}
             %span.input-group-btn
               %button.btn.btn-danger{"ng-click" => "addNewKeyword()", :type => "button"} Create
 .container{"ng-show" => "loading"}

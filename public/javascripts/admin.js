@@ -69,7 +69,8 @@ adminApp.controller("AdminController", function($scope, $modal, $log, KeywordsAp
 
     $scope.titleForEdit = "Select a keyword to edit";
     $scope.titleForCreate = "Input a keyword to create";
-    $scope.selectPlaceHolder = "Select a keyword to edit";
+    $scope.titleForSearch = "Select the keywords for commands";
+    $scope.selectPlaceHolder = "Select a keyword to search";
 
     $scope.keywordNames = KeywordsApi.query({
         name_only: true

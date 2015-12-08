@@ -58,8 +58,9 @@ RailsApp::Application.routes.draw do
   # Note: This route will make all actions in every controller accessible via GET requests.
   # match ':controller(/:action(/:id))(.:format)'
   require Rails.root.join('config', 'initializers', 'myapp.rb')
-  get "/", to: 'application#index'
-  get "/admin", to: 'admin#index'
+  # get "/", to: 'application#index'
+  # get "/admin", to: 'admin#index'
+  get "/", to: 'admin#index'
   resources :keywords
   get "/api/keywords/:id", to: 'api#get_keyword'
   get "/api/keywords",     to: 'api#get_keywords'
