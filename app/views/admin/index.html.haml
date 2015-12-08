@@ -52,17 +52,9 @@
       .col-sm-8
         .panel.panel-info
           .panel-heading
+            %button.btn.btn-danger.btn-xs.pull-right.edit{"ng-click" => "openCreator('command')", :type => "button"} Add
             %h3.panel-title Commands
-            %button.btn.btn-danger.btn-xs.right.edit{"ng-click" => "openCreator('command')", :type => "button"} Add
           .panel-body
-            / .input-group
-            /   %input.form-control{"ng-model" => "newCommand", :placeholder => "Input new command", :type => "text"}
-            /     %span.input-group-btn
-            /       %button.btn.btn-danger{"ng-click" => "addNewCommand()", :type => "button"} Add
-            / %br/
-            / .input-group.full-width
-            /   %textarea.full-width{"ng-model" => "newCommandNote", :placeholder => "Leave some note for your command..."}
-            / %br/
             .row
               %ul
                 %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "command in currentContent.commands"}
@@ -75,17 +67,9 @@
       .col-sm-4
         .panel.panel-success
           .panel-heading
+            %button.btn.btn-danger.btn-xs.pull-right.edit{"ng-click" => "openCreator('file')", :type => "button"} Add
             %h3.panel-title Configuration file
-            %button.btn.btn-danger.btn-xs.right.edit{"ng-click" => "openCreator('file')", :type => "button"} Add
           .panel-body
-            / .input-group
-            /   %input.form-control{"ng-model" => "newFile", :placeholder => "Input new file", :type => "text"}
-            /     %span.input-group-btn
-            /       %button.btn.btn-danger{"ng-click" => "addNewFile()", :type => "button"} Add
-            / %br/
-            / .input-group.full-width
-            /   %textarea.full-width{"ng-model" => "newFileNote", :placeholder => "Leave some note for your file..."}
-            / %br/
             .row
               %ul
                 %li{"ng-class" => "myClass", "ng-mouseenter" => "myClass='selected'", "ng-mouseleave" => "myClass=''", "ng-repeat" => "file in currentContent.files"}

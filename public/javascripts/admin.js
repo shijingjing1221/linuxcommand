@@ -110,7 +110,7 @@ adminApp.controller("AdminController", function($scope, $modal, $log, KeywordsAp
             name: newFile,
             note: newFileNote
         }).$promise.then(function(data) {
-            // $scope.currentContent = data;
+            $scope.currentContent = data;
         });
     };
 
