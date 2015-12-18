@@ -4,7 +4,7 @@ class Resource < ActiveRecord::Base
 
 
     def tags
-        tags = []
+        tags = ['RHEL7']
         for m in self.mappers do
             tags << m.keyword.name
             return tags
