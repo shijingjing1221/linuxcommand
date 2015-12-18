@@ -1,4 +1,4 @@
 <% @resources.each do |r| %>
 {"index":{"_id":"<%= r.id %>"}}
-<%=raw r.to_json%>
+<%=raw r.get_defined_json%>
 <% end %>
