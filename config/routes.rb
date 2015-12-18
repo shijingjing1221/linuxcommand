@@ -61,6 +61,8 @@ RailsApp::Application.routes.draw do
   # get "/", to: 'application#index'
   # get "/admin", to: 'admin#index'
   get "/", to: 'admin#index'
+  get "/get_commands", to: 'admin#get_commands'
+
   resources :keywords
   get "/api/keywords/:id", to: 'api#get_keyword'
   get "/api/keywords",     to: 'api#get_keywords'
