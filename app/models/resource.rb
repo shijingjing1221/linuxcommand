@@ -12,7 +12,7 @@ class Resource < ActiveRecord::Base
     end
 
     def source
-        return  {title:  "Linux command", link: "http://www.linuxcommand.cn"}
+        return  {title:  "Linux command", link: "http://www.linuxcommand.cn?keyword="+self.mappers.first.keyword.name}
     end
 
     def get_defined_json
