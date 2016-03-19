@@ -27,7 +27,8 @@ margin-top: 13px;
 }
 
 .sfbgg {
-    background-color: #f1f1f1;
+    /*background-color: #f1f1f1;*/
+    background-color: #18bc9c;
     border-bottom: 1px solid #666;
     border-color: #e5e5e5;
     height: 90px;
@@ -130,18 +131,18 @@ button.ellipse {
     max-width: 2%;
 }
 
-header ul.navbar-nav li, 
+header ul.navbar-nav li,
 header ul.navbar-right li{
     list-style: none;
 }
 header#navlink{
-    background: black;
+    background: #2c3e50;
     color: white;
 }
 header#navlink a{
      color: white;
      font-weight: bold;
-   
+
 }
 .popover {
     max-width: 100%;
