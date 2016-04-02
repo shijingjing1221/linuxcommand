@@ -77,7 +77,7 @@
                   %div{"ng-if" => "myClass=='selected'"}
                     %button.btn.btn-success.btn-xs.right.copy{"clip-copy" => "file.name", :popover => "Copied!", "popover-placement" => "top"} copy
                     %button.btn.btn-danger.btn-xs.right.edit{"ng-click" => "openEditor(file)", :type => "button"} edit                    
-                    %p.desc
+                    %pre.desc(ng-if="file.note != null")
                       %code {{file.note}}
                   %div
                     %script{:id => "EditorModalContent.html", :type => "text/ng-template"}
