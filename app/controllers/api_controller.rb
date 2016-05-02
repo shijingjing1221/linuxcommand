@@ -2,7 +2,7 @@ class ApiController < ActionController::Base
   protect_from_forgery
 
   def get_keywords
-    @keywords = Keyword.all;
+    @keywords = Keyword.order(:name);
     if params[:name_only] == 'true'
       render :json => @keywords.as_json(only:[:id, :name])
     else
