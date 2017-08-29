@@ -1,0 +1,1350 @@
+name
+yum install -y targetcli
+systemctl enable target; systemctl start target
+firewall-cmd --permanent --add-port=3260/tcp
+firewall-cmd --reload
+fdisk /dev/vdb
+pvcreate /dev/vdb1
+vgcreate iSCSI_vg /dev/vdb1
+vgdisplay iSCSI_vg
+lvcreate -n disk1_lv -L 100m iSCSI_vg
+lvdisplay iSCSI_vg/disk1_lv
+targetcli /backstores/block create block1 /dev/vdb
+targetcli /iscsi create iqn.2014-06.com.example:remotedisk1
+targetcli /iscsi/iqn.2014-06.com.example:remotedisk1/tpg1/portals create 172.25.0.11
+targetcli saveconfig
+systemctl restart iscsi
+iscsiadm -m discovery -t sendtargets -p target_server[:port]
+iscsiadm -m node -T iqn.2014-06.com.example:serverX [-p target_server[:port]] -l
+iscsiadm -m node -T iqn.2012-04.com.example:example [-p target_server[:port]] -u
+iscsiadm -m node -T iqn.2012-04.com.example:example [-p target_server[:port]] -o delete
+yum install -y iscsi-initiator-utils
+iscsiadm -m discovery -t st -p 172.25.X.11
+iscsiadm -m node -T iqn.2014-06.com.example:serverX -p 172.25.X.11 -l
+lsblk
+tail /var/log/messages
+iscsiadm -m session -P 3
+cd /var/lib/iscsi/nodes; ls -lR
+less iqn.2014-06.com.example:serverX/172.25.X.11,3260,1/default
+iscsiadm -m node -T iqn.2014-06.com.example:serverX -p 172.25.X.11 -u
+systemctl restart iscsi
+iscsiadm -m node -T iqn.2014-06.com.example:serverX -p 172.25.X.11 -o delete
+mkfs -t xfs /dev/sda; blkid /dev/sda; mkdir /iscsidisk; vim /etc/fstab; mount /iscsidisk; df -h /iscsidisk
+nmcli dev status
+nmcli con show
+nmcli con show name
+nmcli con add con-name name ...
+nmcli con mod name ...
+nmcli con reload
+nmcli con up name
+nmcli dev dis dev
+nmcli con del name
+ip addr show
+hostnamectl set-hostname ...
+ip link
+nmcli con show
+nmcli con add con-name eno1 type ethernet ifname eno1
+nmcli con show
+ip addr show eno1
+nmcli con show eno1 | grep ipv4
+nmcli con mod eno1 ipv4.addresses '192.168.0.1/24'
+nmcli con mod eno1 ipv4.method manual
+nmcli con down eno1
+nmcli con up eno1
+ip addr show dev eno1
+ip route
+ls /etc/sysconfig/network-scripts/ifcfg-*
+cat /etc/sysconfig/network-scripts/ifcfg-eno1
+echo '192.168.0.254 otherhost' >> /etc/hosts; ping otherhost
+ping6 fe80::211:22ff:feaa:bbcc%eth0
+ping6 ff02::1%eth0
+nmcli con add con-name eno2 type ethernet ifname eno2
+nmcli con add con-name eno2 type ethernet ifname eno2 ip6 2001:db8:0:1::c000:207/64 gw6 2001:db8:0:1::1 ip4 192.0.2.7/24 gw4 192.0.2.1
+nmcli con show static-eth0 | grep ipv6
+nmcli con mod static-eth0 ipv6.address "2001:db8:0:1::a00:1/64 2001:db8:0:1::1"
+nmcli con mod static-eth0 +ipv6.dns 2001:4860:4860::8888
+vim /etc/sysconfig/network-scripts/ifcfg-name; nmcli con reload
+ip addr show eth0
+ip -6 route show
+ping6 -c 1 fe80::f482:dbff:fe25:6a9f%eth1
+ssh fe80::f482:dbff:fe25:6a9f%eth1
+tracepath6 2001:db8:0:2::451
+ss -A inet -n
+netstat -46n
+SELECT * FROM product;
+yum groupinstall mariadb mariadb-client -y
+systemctl start mariadb
+systemctl enable mariadb
+systemctl status mariadb
+mysql_secure_installation
+firewall-cmd --permanent --add-service=mysql; firewall-cmd --reload;
+ss -tulpn | grep mysql
+mysql -u root
+mysql -u root -h localhost -p
+show databases;
+CREATE DATABASE inventory;USE inventory;
+SHOW TABLES;
+DESCRIBE servers;
+INSERT INTO product(name,price,stock,id_category,id_manufacturer) VALUES ('SDSSDP-128G-G252.5',82.04,30,3,1)
+DELETE FROM product WHERE id = 1;
+UPDATE product SET price=89.90, stock=60 WHERE id = 5;
+select name,price,stokck FROM product WHERE price > 100;
+exit
+CREATE USER mobius@localhost IDENTIFIED BY 'redhat';
+SELECT host,user,password FROM user WHERE user = 'mobius';
+GRANT SELECT, UPDATE, DELETE, INSERT on inventory.category to mobius@localhost ;
+REVOKE SELECT, UPDATE, DELETE, INSERT on inventory.category from mobius@localhost ;
+FLUSH PRIVILEGES;
+SHOW GRANTS FOR root@localhost;
+DROP USER mobius@localhost
+CREATE USER steve@'%' identified by 'steve_password';
+GRANT INSERT, UPDATE, DELETE, SELECT on inventory.* to steve@'%';
+GRANT SELECT on inventory.* to steve@'%';FLUSH PRIVILEGES;
+mysqldump -u root -p inventory > /backup/inventory.dump
+mysqldump -u root -p --all-databases > /backup/mariadb.dump
+mysqladmin variables | grep datadir
+df /var/lib/mysql
+vgdisplay vg0 | grep Free
+FLUSH TABLES WITH READ LOCK;
+lvcreate -L20G -s -n mariadb-backup /dev/vg0/mariadb
+UNLOCK TABLES;
+mkdir /mnt/snapshot;mount /dev/vg0/mariadb-backup /mnt/snapshot;
+umount /mnt/snapshot;lvremove /dev/vg0/mariadb-backup;
+systemctl stop mariadb;mysqladmin variables | grep datadir;
+rm -rf /var/lib/mysql/*
+mysql -u root legacy < /home/student/mariadb.dump
+sudo yum -y install httpd httpd-manual
+sudo yum install httpd mod_ssl
+systemctl enable httpd.service
+systemctl start httpd.service
+firewall-cmd --permanent --add-service=http --add-service=https; firewall-cmd --reload
+sudo firewall-cmd --permanent --add-service=http --add-service=https
+semanage fcontext -a -t httpd_sys_content_t '/new/location(/.*)?'
+setfacl -R -m g:webmasters:rwX /var/www/html
+setfacl -R -m d:g:webmasters:rwx /var/www/html
+mkdir -p -m 2775 /new/docroot
+chgrp webmasters /new/docroot
+sudo mkdir -p /srv/{default,wwwX.example.com}/www
+sudo restorecon -Rv /srv/
+sudo chmod 0600 w*X.key
+sudo sed -i 's/wwwX/webappX/g' /etc/httpd/conf.d/webappX.conf
+sudo systemctl status -l httpd.service
+sudo firewall-cmd --list-all
+sudo firewall-cmd --permanent --add-service=http;sudo firewall-cmd --reload
+ls -lZ /var/www/html/index.php
+yum list php; sudo yum install php;
+sudo tail /var/log/httpd/error_log
+sudo yum install php-mysql
+sudo yum install httpd mod_ssl mod_wsgi
+sudo mkdir -p /srv/webappX/www
+sudo cp ~/webapp.wsgi /srv/webappX/www/
+sudo restorecon -Rv /srv/webappX
+linux 16...rd.break console=tty0;ctrl+x
+mount -oremount,rw /sysroot
+chroot /sysroot
+passwd root
+touch /.autorelabel
+exit;exit;
+echo $PATH
+which scirptname
+./scirptname
+./scirptname 2> scirptname.log
+echo "$HOME"
+echo "`pwd`"
+full_name="$FIRST $LAST"
+echo $FIRST_$LAST
+echo ${FIRST}${LAST}
+echo "Current time: `date`"
+echo "Current time: $(date)"
+TAROUTPUT=$(tar cvf /tmp/incremental_backup.tar $(find /etc -type f -mtime -1))
+echo $[<EXPRESSION>]
+echo $[1+1]
+echo $[ (1 +1) * 2 ]
+COUNT=1; echo $[$[$COUNT+1]*2]
+for HOST in host1 host2 host3; do echo $HOST; done
+for HOST in host{1,2,3}; do echo $HOST; done
+for HOST in host{1..3}; do echo $HOST; done
+for FILE in file*; do ls $FILE; done
+for FILE in file{a..c}; do ls $FILE; done
+for PACKAGE in $(rpm -qa | grep kernal); do each "$PACKAGE was install on $(date -d @$(rpm -q --qf "%{INSTALLTIME}\\n" $PACKAGE))";done
+for EVEN in $(seq 2 2 8); do echo "$EVEN"; done; echo "Who do we appreciate?"
+bash -x <SCRIPTNAME>
+bash -x ./filesize
+bash -v ./filesize
+mysql -u root -e 'SHOW DATABASES'
+mysql --skip-column-names -E -u root -e 'SHOW DATABASES'
+mysql --skip-column-names -E -u root -e 'SHOW DATABASES' | grep -v '^*' | grep -v '^information_schema$' | grep -v '^performance_schema$'
+for DBNAME in $(mysql $FMTOPTIONS -u $DBUSER -e "$COMMAND" | grep -v ^* | grep -v information_schema | grep -v performance_schema); do
+echo "Backing up \\"$DBNAME\\"" mysqldump -u $DBUSER $DBNAME > $BACKUPDIR/$DBNAME.dump
+for DBDUMP in $BACKUPDIR/*; do ... done
+for ENTRY in $(cat $NEWUSERSFILE); do...done
+FIRSTNAME=$(echo $ENTRY | cut -d: -f1)
+FIRSTINITIAL=$(echo $FIRSTNAME | cut -c 1 | tr 'A-Z' 'a-z')
+LOWERLASTNAME=$(echo $LASTNAME | tr 'A-Z' 'a-z')
+ACCTNAME=$FIRSTINITIAL$LOWERLASTNAME
+useradd $ACCTNAME -c "$FIRSTNAM $LASTNAME"
+TIER1COUNT=$(grep -c :1$ $NEWUSERSFILE)
+TIER1PCT=$[ $TIER1COUNT * 100 / $TOTAL ]
+for ARG in "$@"; do echo $ARG done
+echo "There are $# arguments."
+./showargs 1 2 3
+echo $?
+grep localhost /etc/hosts
+[ 1 -eq 1 ]; echo $?
+[ abc == abc ]; echo $?
+STRING=; [ -z "$STRING" ]; echo $?
+STRING='abc'; [ -n "$STRING" ]; echo $?
+if [ "$VHOSTNAME" =  ] || [ "$TIER" =  ]; then
+MYVAR="some value"
+export MYVAR
+echo $MYVAR
+alias
+alias ll='ls -l --color=auto'
+export PATH PS1
+yum install -y alsa-lib.i686 libstdc++.i686 xulrunner.i686 gtk2-engines.i686 glibc.i686 libstdc++.so.6 libasound.so.2
+os.fork()
+from multiprocessing import Process, Queue
+THreadLocal
+threading and thread
+from multiprocessing.managers import BaseManager
+ALTER DATABASE db_name CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER TABLE db_name.table_name CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+rake db:migrate
+rake db:rollback
+rails generate migration AddPartNumberToProducts part_number:string
+set names utf8;
+status
+ifup eth0
+sed -i 's/https/http/g' /etc/sysconfig/rhn/up2date
+:w !sudo tee %
+CREATE DATABASE mydb DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+mysqldump -h $OPENSHIFT_MYSQL_DB_HOST -P ${OPENSHIFT_MYSQL_DB_PORT:-3306} -u ${OPENSHIFT_MYSQL_DB_USERNAME:-'admin'} --password="$OPENSHIFT_MYSQL_DB_PASSWORD" --complete-insert $OPENSHIFT_APP_NAME  > ~/app-root/data/backup.sql
+mysql -h $OPENSHIFT_MYSQL_DB_HOST -P ${OPENSHIFT_MYSQL_DB_PORT:-3306} -u ${OPENSHIFT_MYSQL_DB_USERNAME:-'admin'} --password="$OPENSHIFT_MYSQL_DB_PASSWORD" $OPENSHIFT_APP_NAME  < ~/app-root/data/backup.sql
+mysql -u username -ppassword -D dbname -e "DROP TABLE tablename"
+sed -i -e 's/\\r$//' script.sh
+sed -i '26d' ~/.ssh/known_hosts
+yum install httpd httpd-manual
+systemctl start nfs-server
+systemctl enable nfs-server
+mkdir /myshare
+vim /etc/exports
+exportfs -r
+firewall-cmd --permanent --add-service=nfs; firewall-cmd --reload
+mkdir /mnt/nfsexport
+mount serverX:/myshare /mnt/nfsexport
+man nfs 5
+man mount 8
+man mount.nfs 8
+man exportfs 8
+man exports 5
+chown nfsnobody /nfsshare
+echo '/nfsshare desktopX(rw)' >>/etc/exports
+vim /etc/fstab
+mount -a
+wget -O /etc/krb5.keytab http://classroom.example.com/pub/ keytabs/serverX.keytab
+vim /etc/sysconfig/nfs
+systemctl start nfs-secure-server
+systemctl enable nfs-secure-server
+mkdir /securenfs
+echo '/securenfs desktopX(sec=krb5p,rw)' >>/etc/exports
+wget -O /etc/krb5.keytab http://classroom.example.com/pub/ keytabs/desktopX.keytab
+systemctl start nfs-secure
+systemctl enable nfs-secure
+mkdir /mnt/secureshare
+mount -o sec=krb5p,v4.2 serverX:/securedexport /mnt/securedexport
+echo "Hello World" > /securenfs/testfile.txt
+chcon -t public_content_t /securenfs/testfile.txt
+chown ldapuserX:ldapuserX /securenfs/testfile.txt
+chmod 644 /securenfs/testfile.txt
+ls -Z /mnt/secureshare
+ssh ldapuserX@desktopX
+echo "I can write">>/mnt/secureshare/testfile.txt
+yum -y install samba
+groupadd -r marketing
+mkdir -p /smbshare
+chgrp marketing /smbshare
+chmod 2775 /smbshare
+semanage fcontext -a -t samba_share_t '/smbshare(/.*)?'
+restorecon -vvFR /smbshare
+vim /etc/samba/smb.conf
+yum -y install samba-client
+useradd -s /sbin/nologin -G marketing brian
+smbpasswd -a brian
+useradd -s /sbin/nologin rob
+smbpasswd -a rob
+systemctl start smb nmb
+systemctl enable smb nmb
+firewall-cmd --permanent --add-service=samba; firewall-cmd --reload
+yum -y install cifs-utils
+mkdir /mnt/brian
+mount -o username=brian //serverX/smbshare /mnt/brian
+echo "Hello World" > /mnt/brian/brian1.txt
+mkdir /mnt/rob
+mount -o username=rob //serverX/smbshare /mnt/rob
+touch /mnt/rob/rob1.txt
+testparm
+su frank; cifscreds add serverX
+echo "Frank was here" >/mnt/multiuser/frank2.txt
+su - jane; cifscreds add serverX
+echo "Jane was not here" >/mnt/multiuser/jane2.txt
+mkdir /mnt/multiuser
+echo 'username=brian' >/root/smb-multiuser.txt; echo 'password=redhat' >>/root/smb-multiuser.txt
+vim /etc/fstab
+mount /mnt/multiuser
+nmcli dev status
+nmcli con show
+nmcli con show --active
+ip addr show
+ip addr show eth0
+nmcli con add con-name eno2 type ethernet ifname eno2
+nmcli con add con-name eno2 type ethernet ifname eno2 ip4 192.168.0.5/24 gw4 192.168.0.254
+nmcli con up name
+nmcli con up static-eth0
+nmcli dev disconnect device
+nmcli dev dis eth0
+nmcli con show static-eth0
+nmcli con mod name
+nmcli con mod static-eth0 ipv4.addresses "192.0.2.2/24 192.0.2.254"
+nmcli con reload
+nmcli con mod static-eth0 +ipv4.dns 192.0.2.1
+nmcli con del name
+hostname
+hostnamectl set-hostname demo.example.com
+hostnamectl status
+ip link
+nmcli con show eno1|grep ipv4
+nmcli con mod eno1 ipv4.addresses '192.168.0.1/24'
+nmcli con mod eno1 ipv4.method manual
+nmcli con down eno1; nmcli con up eno1
+ip addr show dev eno1
+ip route
+ls /etc/sysconfig/network-scripts/ifcfg-*
+echo '192.168.0.254 otherhost' >> /etc/hosts
+ping otherhost
+cat /etc/fstab
+fdisk -l
+dump -0uf /backup-files/sda1.dump /dev/sda1
+dump -0uf /backup-files/sda2.dump /dev/sda2
+dump -0uf /backup-files/sda3.dump /dev/sda3
+mkfs.ext3 /dev/sda1
+mkfs.ext3 /dev/sda2
+mkfs.ext3 /dev/sda3
+e2label /dev/sda1 /boot1
+e2label /dev/sda2 /
+e2label /dev/sda3 /data
+mkswap -L SWAP-sda5 /dev/sda5
+mkdir /mnt/sda1
+mount -t ext3 /dev/sda1 /mnt/sda1
+mkdir /mnt/sda2
+mount -t ext3 /dev/sda2 /mnt/sda2
+mkdir /mnt/sda3
+mount -t ext3 /dev/sda3 /mnt/sda3
+mkdir /backup-files
+mount -t ext3 /dev/sda6 /backup-files
+cd /mnt/sda1
+restore -rf /backup-files/sda1.dump
+cd /mnt/sda2
+restore -rf /backup-files/sda2.dump
+cd /mnt/sda3
+restore -rf /backup-files/sda3.dump
+tar --exclude=/proc,/mnt,/tmp,/backupdata -jcvp -f /backupdata/system.tar.bz2 /
+tar cvpzf backup.tar.gz --exclude=/proc --exclude=/mnt --exclude=/sys --exclude=/backup.tar.gz /
+tar -cvf /dev/st0 / --exclude=/proc,/sys,/dev
+tar -N '2009-06-01' -jpcv -f /backupdata/home.tar.bz2 /home
+cpio -ovcB  > [file|device]
+find /boot | cpio -ocvB > /tmp/boot.cpio
+mt -f /dev/st0 rewind
+mkdir /mnt/sysimage
+mount /dev/sda2 /mnt/sysimage
+tar -xvf /dev/st0 /mnt/sysimage
+cpio -ivcdu < [file|device]
+cpio -iduv < /dev/st0
+cpio -idvc < /tmp/boot.cpio
+rsync -aAXvz /*  --exclude={/dev/*,/proc/*,/sys/*,/tmp/*}
+mkdir /mnt/external
+mount /dev/sdb1 /mnt/external
+dd if=/dev/sda | gzip -9 > /mnt/external/filename.img.gz
+zcat /mnt/external/filename.img.gz | dd of=/dev/sda
+dd if=/dev/sda of=/dev/sdc
+ssh-keygen
+ssh-copy-id serverX
+ssh serverX 'hostname'
+su -
+sosreport
+cd /var/tmp; tar -xvJf sosreport-*.tar.xz
+cd sosreport-yourname.01034421-20140129000049; ls -lR
+cd /var/tmp;rm -rf sosreport*
+exit
+cp file1 file2
+cp file1 file2 file3 dir
+mv file1 file2
+mv file1 file2 file3 dir
+rm file1
+rm -f file1 file2 file3
+mkdir dir
+mkdir -p par1/par2/dir
+cp -r dir1 dir2
+cp -r dir1 dir2 dir3 dir4
+mv dir1 dir2
+mv dir1 dir2 dir3 dir4
+rm -r dir1
+rm -rf dir1 dir2 dir3
+touch song1.mp3 song2.mp3 song3.mp3 song4.mp3 song5.mp3 song6.mp3
+touch snap1.jpg snap2.jpg snap3.jpg snap4.jpg snap5.jpg snap6.jpg
+touch film1.avi film2.avi film3.avi film4.avi film5.avi film6.avi
+ls -l
+mv song1.mp3 song2.mp3 song3.mp3 song4.mp3 song5.mp3 song6.mp3 Music
+mv snap1.jpg snap2.jpg snap3.jpg snap4.jpg snap5.jpg snap6.jpg Pictures
+mv film1.avi film2.avi film3.avi film4.avi film5.avi film6.avi Videos
+ls -l Music Pictures Videos
+mkdir friends family work
+cd friends
+cp ~/Music/song1.mp3 ~/Music/song2.mp3 ~/Pictures/ snap1.jpg ~/Pictures/snap2.jpg ~/Videos/film1.avi ~/Videos/film2.avi .
+cd ../family
+cp ~/Music/song3.mp3 ~/Music/song4.mp3 ~/Pictures/ snap3.jpg ~/Pictures/snap4.jpg ~/Videos/film3.avi ~/Videos/film4.avi .
+cd ../work
+cp ~/Music/song5.mp3 ~/Music/song6.mp3 ~/Pictures/snap5.jpg ~/Pictures/snap6.jpg ~/Videos/film5.avi ~/Videos/film6.avi .
+cd
+rmdir family friends
+rm -r family friends
+cd work
+rm song5.mp3 song6.mp3 snap5.jpg snap6.jpg film5.avi film6.avi
+rmdir work
+ln /usr/share/doc/qemu-kvm/qmp-commands.txt /root/qmpmanual. txt
+ls -l /root/qmp-manual.txt
+ls -l /usr/share/doc/qemu-kvm/qmp-commands.txt
+ln -s /tmp /root/tempdir
+ls -l /root
+id
+ps au
+su <username>
+su - <username>
+pwd
+echo $HOME
+echo $PATH
+exit
+tail -5 /var/log/messages
+sudo tail -5 /var/log/messages
+cp /etc/motd /etc/motdOLD
+rm /etc/motdOLD
+echo "Welcome to class" >> /etc/motd
+sudo vim /etc/motd
+su -
+useradd juliet
+tail -2 /etc/passwd
+passwd juliet
+useradd romeo
+passwd romeo
+useradd hamlet; passwd hamlet
+useradd reba; passwd reba
+useradd dolly; passwd dolly
+useradd elvis; passwd elvis
+sudo groupadd -g 5000 ateam
+sudo groupadd -r appusers
+sudo groupmod -n javaapp appusers
+sudo groupmod -g 6000 ateam
+sudo groupdel javaapp
+sudo usermod -g student student
+sudo usermod -aG wheel elvis
+chage -m 0 -M 90 -W 7 -I 14 username
+chage -d 0 username
+chage -l username
+chage -E YYYY-MM-DD username
+date -d "+45 days"
+sudo usermod -L -e 1 elvis
+usermod -s /sbin/nologin student
+sudo chage -M 90 romeo
+sudo chage -d 0 romeo
+sudo chage -E 2014-08-02 romeo
+sudo yum -y install authconfig-gtk sssd krb5-workstation
+authconfig-gtk
+sudo ipa-client-install
+yum -y install realmd
+sudo realm discover domain.example.com
+sudo realm join domain.example.com
+sudo realm permit --realm domain.example.com --all
+sudo realm permit --realm domain.example.com DOMAIN\\\\Itchy DOMAIN\\ \\Scratchy
+getent passwd ldapuserX
+sudo vi /etc/login.defs
+cat /etc/login.defs
+sudo groupadd -g 900 consultants
+tail -5 /etc/group
+sudo useradd -G consultants sspade
+sudo useradd -G consultants bboop
+sudo useradd -G consultants dtracy
+sudo passwd sspade
+sudo passwd bboop
+sudo passwd dtracy
+sudo chage -E $(date +%Y-%m-%d -d +90days) sspade
+sudo chage -E $(date +%Y-%m-%d -d +90days) bboop
+sudo chage -E $(date +%Y-%m-%d -d +90days) dtracy
+sudo chage -M 15 bboop
+chage -l bboop
+sudo chage -d 0 sspade
+sudo yum -y install ipa-client
+sudo ipa-client-install --domain=serverX.example.com --nontp --mkhomedir
+ssh ipauser@desktopX.example.com
+chmod WhoWhatWhich file|directory
+chmod ### file|directory
+chmod go-rw file1
+chmod a+x file2
+chmod 750 sampledir
+chmod -R g+rwX demodir
+chown student foofile
+chown -R student foodir
+chown :admins foodir
+chown visitor:guests foodir
+ls -l /usr/bin/passwd
+ls -ld /tmp
+chmod g+s directory
+chmod 2770 directory
+umask
+touch newfile1
+ls -l newfile1
+mkdir newdir1
+ls -ld newdir1
+umask 0
+umask 007
+umask 027
+echo "umask 007" >> ~/.bashrc
+getfacl roster.txt
+getfacl /directory
+setfacl -m u:name:rX file
+setfacl -m g:name:rw file
+setfacl -m o::- file
+setfacl -m u::rwx,g:sodor:rX,o::- file
+getfacl file-A | setfacl --set-file=- file-B
+setfacl -m m::r file
+setfacl -R -m u:name:rX directory
+setfacl -x u:name,g:name file
+setfacl -b file
+setfacl -m d:u:name:rx directory
+setfacl -x d:u:name directory
+setfacl -k /directory
+setfacl -b /directory
+ps axZ
+systemctl start httpd
+ps -ZC httpd
+ls -Z /home
+ls -Z /var/www
+getenforce
+getsebool -a
+setenforce Enforcing
+vi /etc/selinux/config
+grep '^SELINUX' /etc/selinux/config
+setenforce 1
+ls -Zd /var/www/html/
+touch /var/www/html/index.html
+ls -Z /var/www/html/index.html
+mkdir /virtual
+ls -Zd /virtual
+chcon -t httpd_sys_content_t /virtual
+restorecon -v /virtual
+ls -Z /var/www/html/file*
+semanage fcontext -l
+restorecon -Rv /var/www/
+semanage fcontext -a -t httpd_sys_content_t '/virtual(/.*)?'
+restorecon -RFvv /virtual
+semanage fcontext -a -t httpd_sys_content_t '/custom(/.*)?'
+restorecon -Rv /custom
+man -k '_selinux'
+getsebool httpd_enable_homedirs
+setsebool httpd_enable_homedirs on
+semanage boolean -l | grep httpd_enable_homedirs
+setsebool -P httpd_enable_homedirs on
+semanage boolean -l -C
+tail /var/log/audit/audit.log
+tail /var/log/messages
+sealert -l 613ca624-248d-48a2-a7d9-d28f5bbe2763
+ls -d -Z /var/web-content /var/www/html
+semanage fcontext -a -t httpd_sys_content_t '/var/webcontent(/.*)?'
+restorecon -R /var/web-content/
+kill PID
+kill -signal PID
+kill -l
+killall command_pattern
+killall -signal command_pattern
+killall -signal -u username command_pattern
+pkill command_pattern
+pkill -signal command_pattern
+pkill -G GID command_pattern
+pkill -P PPID command_pattern
+pkill -t terminal_name -U UID command_pattern
+w -f
+pgrep -l -u bob
+pkill -SIGKILL -u bob
+pstree -p bob
+pkill -P 8391
+pkill -SIGKILL -P 8391
+(while true; do echo -n "game " >> ~/outfile; sleep 1; done) &
+(while true; do echo -n "set " >> ~/outfile; sleep 1; done) &
+(while true; do echo -n "match " >> ~/outfile; sleep 1; done) &
+tail -f ~/outfile
+jobs
+kill -SIGSTOP %number
+kill -SIGTERM %number
+kill -SIGCONT %number
+pkill -SIGTERM tail
+grep "model name" /proc/cpuinfo
+grep "model name" /proc/cpuinfo | wc -l
+uptime
+top
+ps axo pid,comm,nice --sort=-nice
+nice -n 15 dogecoinminer &
+renice -n <NICELEVEL> <PID>...
+renice -n -7 $(pgrep origami@home)
+NCORES=$( grep -c '^processor' /proc/cpuinfo )
+ps u $(pgrep sha1sum)
+killall sha1sum
+ps -opid,pcpu,nice,comm $(pgrep sha1sum)
+renice -n 5 <PID>
+sudo renice -n -10 <PID>
+sudo top
+ps aux --sort=pcpu
+sudo renice -n 10 <PROCESSPID1> <PROCESSPID2>
+subscription-manager register --username=yourusername -- password=yourpassword
+subscription-manager list --available | less
+subscription-manager attach --auto
+subscription-manager list --consumed
+subscription-manager unregister
+yum list 'http*'
+yum help
+yum search KEYWORD
+yum info httpd
+yum provides /var/www/html
+yum install httpd
+yum search all 'web server'
+yum update PACKAGENAME
+yum update
+yum update kernel
+yum list kernel
+uname -r
+uname -a
+yum remove PACKAGENAME
+yum group list
+yum grouplist
+yum group info
+yum groupinfo
+yum group info "Identity Management Server"
+yum group install "Infiniband Support"
+yum groupinstall "Infiniband Support"
+tail -5 /var/log/yum.log
+yum history
+yum history undo 6
+gnuplot
+yum search plot
+yum info gnuplot
+yum install -y gnuplot
+yum remove gnuplot
+yum remove gnuplot-common
+yum groupinfo "Compatibility Libraries"
+yum groupinstall "Compatibility Libraries"
+yum history info 3
+yum history undo 3
+yum repolist all
+yum history info 3
+yum-config-manager --enable rhel-7-server-debug-rpms
+yum-config-manager --add-repo="http://dl.fedoraproject.org/pub/epel/7/ x86_64/"
+rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+yum install http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epelrelease- 7-2.noarch.rpm
+cat /etc/yum.repos.d/epel.repo
+yum-config-manager --add-repo="http://content.example.com/ rhel7.0/x86_64/rht"
+yum-config-manager --disable content.example.com_rhel7.0_x86_64_rht
+yum update -y
+yum list rht*
+yum -y install rht-system
+blkid
+mount /dev/vdb1 /mnt/mydata
+mount UUID="46f543fd-78c9-4526-a857-244811be2d88" /mnt/mydata
+umount /mnt/mydata
+lsof /mnt/mydata
+fdisk /dev/vdb
+fdisk /dev/vdb
+partprobe /dev/vdb
+gdisk /dev/vdb
+mkfs -t xfs /dev/vdb1
+mount /dev/vdb1 /mnt
+mount | grep vdb1
+cat /etc/fstab
+blkid /dev/vdb1
+mount -a
+partprobe
+mkfs -t ext4 /dev/vdb1
+mkdir /archive
+vim /etc/fstab
+mount | grep -w /archive
+mount | grep ^/
+mkswap /dev/vdb1
+free
+swapon /dev/vdb1
+swapon -a
+swapon -s
+swapoff /dev/vdb1
+systemctl -t help
+systemctl status name.type
+systemctl status name
+systemctl status sshd.service
+systemctl
+systemctl --type=service
+systemctl status rngd.service -l
+systemctl is-active sshd
+systemctl is-enabled sshd
+systemctl list-units --type=service
+systemctl list-units --type=service --all
+systemctl list-unit-files --type=service
+systemctl --failed --type=service
+sudo systemctl list-units --type=service
+sudo systemctl list-units --type=socket --all
+sudo systemctl status chronyd
+ps -p PID
+sudo systemctl is-enabled sshd
+sudo systemctl is-active sshd
+sudo systemctl status sshd
+sudo systemctl list-unit-files --type=service
+systemctl reload sshd.service
+ps -up PID
+systemctl list-dependencies UNIT
+systemctl list-dependencies UNIT --reverse
+systemctl mask network
+systemctl unmask network
+systemctl list-dependencies graphical.target | grep target
+systemctl list-units --type=target --all
+systemctl list-unit-files --type=target --all
+systemctl isolate multi-user.target
+systemctl get-default
+systemctl set-default graphical.target
+systemctl set-default multi-user.target
+sudo systemctl isolate multi-user.target
+systemctl reboot
+mkdir -p -m2775 /var/log/journal
+chown :systemd-journal /var/log/journal
+killall -USR1 systemd-journald
+systemctl --failed --type=service
+journalctl -b-1 -p err
+systemctl enable debug-shell.service
+ip addr show eth0
+ip -s link show eth0
+ip route
+ping -c3 172.25.X.254
+tracepath access.redhat.com
+ss -ta
+ip addr
+ss -lt
+nmcli con show
+nmcli con show --active
+nmcli con show "static-eth0"
+nmcli dev status
+nmcli dev show eth0
+nmcli con add con-name "default" type ethernet ifname eth0
+nmcli con add con-name "static" ifname eth0 autoconnect no type ethernet ip4 172.25.X.10/24 gw4 172.25.X.254
+nmcli con up "static"
+nmcli con up "default"
+nmcli con add help
+nmcli con show "static"
+nmcli con mod "static" connection.autoconnect no
+nmcli con mod "static" ipv4.dns 172.25.X.254
+nmcli con mod "static" +ipv4.dns 8.8.8.8
+nmcli con mod "static" ipv4.addresses "172.25.X.10/24 172.25.X.254"
+nmcli con mod "static" +ipv4.addresses 10.10.10.10/16
+nmcli con show "System eth0"
+sudo nmcli con add con-name "static-eth0" ifname eth0 type ethernet ip4 172.25.X.11/24 gw4 172.25.X.254
+sudo nmcli con mod "static-eth0" ipv4.dns 172.25.254.254
+sudo nmcli con up "static-eth0"
+ping -c3 172.25.254.254
+sudo nmcli con mod "System eth0" connection.autoconnect no
+reboot
+nmcli con reload
+nmcli con up "System eth0"
+echo "IPADDR1=10.0.X.1" >> /etc/sysconfig/network-scripts/ ifcfg-eth0
+nmcli con down "System eth0"
+echo "PREFIX1=24" >> /etc/sysconfig/network-scripts/ifcfg-eth0
+echo "IPADDR1=10.0.X.2" >> /etc/sysconfig/network-scripts/ ifcfg-eth0
+echo "PREFIX1=24" >> /etc/sysconfig/network-scripts/ifcfgeth0
+hostname
+hostnamectl
+hostnamectl set-hostname desktopX.example.com
+hostnamectl status
+cat /etc/hosts
+getent hosts hostname
+nmcli con mod ID ipv4.dns IP
+nmcli con down ID
+nmcli con up ID
+cat /etc/sysconfig/network-scripts/ifcfg-ID
+nmcli con mod ID +ipv4.dns IP
+host classroom.example.com
+host 172.25.254.254
+nmcli con mod "System eth0" ipv4.ignore-auto-dns yes
+sudo hostnamectl set-hostname serverX.example.com
+cat /etc/hostname
+sudo hostname testname
+sudo vim /etc/hosts
+host class
+getent hosts class
+ping -c3 class
+tail -f /path/to/file
+tail -f /var/log/secure
+logger -p local7.notice "Log entry created on serverX"
+echo "*.debug /var/log/messages-debug" >/etc/rsyslog.d/ debug.conf
+systemctl restart rsyslog
+tail -f /var/log/messages-debug
+logger -p user.debug "Debug Message Test" 2.3.
+journalctl
+journalctl -n 5
+journalctl -p err
+journalctl -f
+journalctl --since today
+journalctl --since "2014-02-10 20:30:00" --until "2014-02-13 12:00:00"
+journalctl -o verbose
+journalctl _SYSTEMD_UNIT=sshd.service _PID=1182
+journalctl _PID=1
+journalctl _UID=81
+journalctl -p warning
+journalctl --since 9:05:00 --until 9:15:00
+journalctl --since 9:00:00 _SYSTEMD_UNIT="sshd.service"
+journalctl | head -2
+mkdir /var/log/journal
+chown root:systemd-journal /var/log/journal
+chmod 2755 /var/log/journal
+killall -USR1 systemd-journald
+journalctl -b
+journalctl -b -1
+ls /var/log/journal/4513ad59a3b442ffa4b7ea88343fa55f
+timedatectl
+timedatectl list-timezones
+timedatectl set-timezone America/Phoenix
+timedatectl set-time 9:00:00
+timedatectl set-ntp true
+systemctl restart chronyd
+chronyc sources -v
+tzselect
+timedatectl set-timezone America/Port-au-Prince
+timedatectl set-timezone America/Jamaica
+journalctl --since 9:00:00 --until 9:30:00
+echo "authpriv.alert /var/log/auth-errors" >/etc/rsyslog.d/ auth-errors.conf
+logger -p authpriv.alert "Logging test authpriv.alert"
+tail /var/log/auth-errors
+vgcreate vg-alpha /dev/vda2 /dev/vdb1
+lvcreate -n hercules -L 2G vg-alpha
+mkfs -t xfs /dev/vg-alpha/hercules
+mkdir /mnt/hercules
+mount -a
+umount /mnt/hercules
+lvremove /dev/vg-alpha/hercules
+vgremove vg-alpha
+pvremove /dev/vda2 /dev/vdb1
+pvdisplay /dev/vda2
+vgdisplay vg-alpha
+lvdisplay /dev/vg-alpha/hercules
+fdisk /dev/vdb
+partprobe
+pvcreate /dev/vdb1 /dev/vdb2
+vgcreate shazam /dev/vdb1 /dev/vdb2
+lvcreate -n storage -L 400M shazam
+mkfs -t xfs /dev/shazam/storage
+mkdir /storage
+vim /etc/fstab
+cp -a /etc/*.conf /storage
+ls /storage | wc -l 47
+fdisk -l /dev/vdb
+pvdisplay /dev/vdb2
+vgdisplay shazam
+lvdisplay /dev/shazam/storage
+mount
+df -h /storage
+pvcreate /dev/vdb2
+vgextend vg-alpha /dev/vdb2
+pvmove /dev/vdb2
+vgreduce vg-alpha /dev/vdb2
+lvextend -L +300M /dev/vg-alpha/hercules
+xfs_growfs /mnt/hercules
+lvextend -l +extents /dev/vgname/lvname
+vgdisplay vgname
+resize2fs /dev/vgname/lvname
+resize2fs /dev/vg-alpha/hercules
+pvcreate /dev/vdb3
+vgextend shazam /dev/vdb3
+lvextend -L 700M /dev/shazam/storage
+xfs_growfs /storage
+ls /storage | wc -l
+xfs_growfs /finance/loans
+vim /etc/cron.daily/usercount.sh
+chmod +x /etc/cron.daily/usercount.sh
+yum -y install sysstat
+rpm -qc sysstat
+vim /etc/cron.d/sysstat
+watch ls -l /var/log/sa
+sudo cp /usr/lib/tmpfiles.d/tmp.conf /etc/tmpfiles.d/
+sudo sed -i '/^d .tmp /s/10d/5d/' /etc/tmpfiles.d/tmp.conf
+sudo systemd-tmpfiles --clean tmp.conf
+sudo systemd-tmpfiles --create gallifrey.conf
+ls -ld /run/gallifrey
+sudo touch /run/gallifrey/companion
+sleep 30s 6.3.
+sudo systemd-tmpfiles --clean gallifrey.conf
+sudo ls -l /run/gallifrey
+sudo systemctl enable nfs-secure
+sudo systemctl start nfs-secure
+sudo yum -y install nfs-utils
+sudo mkdir /mountpoint
+sudo mount serverX:/ /mountpoint
+sudo ls /mountpoint
+showmount -e serverX
+mkdir -p /mountpoint
+sudo mount -t nfs -o sync serverX:/share /mountpoint
+sudo vim /etc/fstab
+sudo umount /mountpoint
+sudo wget -O /etc/krb5.keytab http://classroom.example.com/ pub/keytabs/desktopX.keytab
+sudo mkdir -p /mnt/{public,manual}
+sudo mount -a
+sudo mount -o sync,sec=sys serverX:/shares/manual /mnt/manual
+ssh ldapuserX@localhost
+cd /mnt/manual
+echo hello > test.txt
+cat test.txt
+sudo umount /mnt/manual
+sudo yum -y install autofs
+sudo vim /etc/auto.master.d/demo.autofs
+sudo vim /etc/auto.demo
+sudo systemctl enable autofs
+sudo systemctl start autofs
+smbclient -L //serverX
+sudo mount -t cifs -o guest //serverX/share /mountpoint
+sudo mount -t cifs -o guest //serverX/docs /public/docs
+sudo mount -t cifs -o username=watson //serverX/cases /bakerst/ cases
+sudo mount -t cifs -o credentials=/secure/sherlock //serverX/ sherlock /home/sherlock/work
+sudo yum -y install cifs-utils
+mkdir ~/work
+sudo mkdir /secure
+sudo vim /secure/student.smb
+sudo chmod 770 /secure
+sudo chmod 600 /secure/student.smb
+cat ~/work/samba.txt
+echo testing > ~/work/test.txt
+sudo vim /etc/auto.master.d/home.autofs
+sudo vim /etc/auto.home
+pwd
+sudo systemctl reboot
+sudo yum -y install cifs-utils autofs
+sudo vim /etc/auto.master.d/shares.autofs
+sudo vim /etc/auto.shares
+sudo vim /etc/me.cred
+sudo chmod 600 /etc/me.cred
+groups
+grep -e bakerst -e 10221 /etc/group
+sudo groupadd -g 10221 bakerst
+sudo usermod -aG bakerst student
+newgrp bakerst
+cd /shares/work
+cat samba.txt
+echo testing > my.txt
+cd ../docs
+cd ../cases
+firewall-config
+firewall-cmd --set-default-zone=dmz
+firewall-cmd --permanent --zone=internal --add-source=192.168.0.0/24
+firewall-cmd --permanent --zone=internal --add-service=mysql
+firewall-cmd --reload
+sudo yum -y install httpd mod_ssl
+sudo bash -c "echo 'I am alive' > /var/www/html/index.html"
+sudo systemctl start httpd
+sudo systemctl enable httpd
+sudo systemctl mask iptables
+sudo systemctl mask ip6tables
+sudo systemctl status firewalld
+curl -k http://serverX.example.com
+curl -k https://serverX.example.com
+sudo systemctl enable firewalld
+sudo systemctl start firewalld
+sudo firewall-cmd --get-default-zone
+sudo firewall-cmd --set-default-zone public
+sudo firewall-cmd --permanent --zone=public --list-all
+sudo firewall-cmd --permanent --zone=public --add-port 8080/tcp
+system-configkickstart
+sudo cat /root/anaconda-ks.cfg > kickstart.cfg
+sudo cp ~student/kickstart.cfg /var/www/html/ks-config
+curl http://classroom.example.com/pub/materials/lab-kickstart -o lab-kickstart
+chmod 755 lab-kickstart
+grep --color -E "vmx|svm" /proc/cpuinfo
+grep --color -E "nx" /proc/cpuinfo
+yum install qemu-kvm qemu-img
+yum install virt-manager libvirt libvirt-python python-virtinst libvirt-client
+virsh list
+virsh destroy server
+virsh list --all
+virsh start server
+virt-manager
+nmcli con add type team con-name CNAME ifname INAME [config JSON]
+nmcli con add type team con-name team0 ifname team0 config '{"runner": {"name": "loadbalance"}}'
+nmcli con mod team0 ipv4.addresses 1.2.3.4/24
+nmcli con mod team0 ipv4.method manual
+nmcli con add type team-slave con-name CNAME ifname INAME master TEAM
+nmcli con add type team-slave ifname eth1 master team0
+nmcli con add type team-slave ifname eth2 master team0 con-name team0- eth2
+nmcli dev dis INAME
+nmcli con up CNAME
+nmcli con up team0
+nmcli dev dis eth2
+teamdctl team0 state
+sudo -i
+ip link
+nmcli con add type team con-name team0 ifname team0 config '{"runner": {"name": "activebackup"}}'
+nmcli con mod team0 ipv4.addresses '192.168.0.100/24'
+nmcli con add type team-slave con-name team0-port1 ifname eno1 master team0
+nmcli con add type team-slave con-name team0-port2 ifname eno2 master team0
+ping -I team0 192.168.0.254
+nmcli dev dis eno1
+nmcli con up team0-port1
+nmcli dev dis eno2
+nmcli con up team0-port2
+vim /etc/sysconfig/network-scripts/ifcfg-team0
+vim /etc/sysconfig/network-scripts/ifcfg-team0-eth1
+nmcli con mod IFACE team.config JSON-configuration-file-or-string
+cat /tmp/team.conf
+nmcli con mod team0 team.config /tmp/team.conf
+teamnl team0 ports
+teamnl team0 getoption activeport
+teamnl team0 setoption activeport 3
+teamdctl team0 config dump
+nmcli con add type bridge con-name br0 ifname br0
+nmcli con add type bridge-slave con-name br0-port1 ifname eth1 master br0
+nmcli con add type bridge-slave con-name br0-port2 ifname eth2 master br0
+cat /etc/sysconfig/network-scripts/ifcfg-br1
+cat /etc/sysconfig/network-scripts/ifcfg-br1-port0
+brctl show
+nmcli con add type bridge con-name br1 ifname br1
+nmcli con mod br1 ipv4.addresses 192.168.0.100/24
+nmcli con mod br1 ipv4.method manual
+nmcli con add type bridge-slave con-name br1-port0 ifname eno1 master br1
+ping -I br1 192.168.0.254
+nmcli dev dis team0
+systemctl stop NetworkManager
+systemctl disable NetworkManager
+cd /etc/sysconfig/network-scripts/
+ls -1 ifcfg-*
+vim ifcfg-team0
+tail ifcfg-team0
+vim ifcfg-team0-port1
+cat ifcfg-team0-port1
+vim ifcfg-brteam0
+cat ifcfg-brteam0
+systemctl restart network
+reboot
+ping -I brteam0 192.168.0.254
+firewall-cmd --set-default-zone=dmz
+firewall-cmd --permanent --zone=internal --add-source=192.168.0.0/24
+firewall-cmd --permanent --zone=internal --add-service=mysql
+firewall-cmd --reload
+sudo systemctl status firewalld.service
+sudo yum install httpd mod_ssl
+sudo systemctl enable httpd.service
+sudo systemctl start httpd.service
+sudo vim /var/www/html/index.html
+cat /var/www/html/index.html
+sudo firewall-cmd --set-default-zone=dmz
+sudo firewall-cmd --permanent --zone=work --addsource= 172.25.X.0/24
+sudo firewall-cmd --permanent --zone=work --addservice= https
+sudo firewall-cmd --reload
+sudo firewall-cmd --get-default-zone
+sudo firewall-cmd --get-active-zones
+sudo firewall-cmd --zone=work --list-all
+curl http://serverX.example.com
+curl -k https://serverX.example.com
+firewall-cmd --direct --permanent --add-chain ipv4 raw blacklist
+firewall-cmd --direct --permanent --add-rule ipv4 raw PREROUTING 0 -s 192.168.0.0/24 -j blacklist
+firewall-cmd --direct --permanent --add-rule ipv4 raw blacklist 0 -m limit --limit 1/min -j LOG --log-prefix "blacklisted "
+firewall-cmd --direct --permanent --add-rule ipv4 raw blacklist 1 -j DROP
+firewall-cmd --permanent --zone=classroom --add-rich-rule='rule family=ipv4 source address=192.168.0.11/32 reject'
+firewall-cmd --add-rich-rule='rule service name=ftp limit value=2/m accept'
+firewall-cmd --permanent --add-rich-rule='rule protocol value=esp drop'
+firewall-cmd --permanent --zone=vnc --add-rich-rule='rule family=ipv4 source address=192.168.1.0/24 port port=7900-7905 protocol=tcp accept'
+firewall-cmd --permanent --zone=work --add-rich-rule='rule service name="ssh" log prefix="ssh " level="notice" limit value="3/m" accept
+firewall-cmd --add-rich-rule='rule family=ipv6 source address="2001:db8::/64" service name="dns" audit limit value="1/h" reject' -- timeout=300
+sudo yum install httpd
+sudo firewall-cmd --permanent --add-rich-rule='rule family=ipv4 source address=172.25.X.10/32 service name="http" log level=notice prefix="NEW HTTP " limit value="3/s" accept'
+sudo tail -f /var/log/messages
+firewall-cmd --permanent --zone=<ZONE> --add-masquerade
+firewall-cmd --permanent --zone=<ZONE> --add-rich-rule='rule family=ipv4 source address=192.168.0.0/24 masquerade'
+firewall-cmd --permanent --zone=<ZONE> --add-forwardport= port=<PORTNUMBER>:proto=<PROTOCOL>[:toport=<PORTNUMBER>][:toaddr=<IPADDR>]
+firewall-cmd --permanent --zone=public --add-forwardport= port=513:proto=tcp:toport=132:toaddr=192.168.0.254
+firewall-cmd --permanent --zone=work --add-rich-rule='rule family=ipv4 source address=192.168.0.0/26 forward-port port=80 protocol=tcp to-port=8080'
+sudo firewall-cmd --permanent --add-rich-rule 'rule family=ipv4 source address=172.25.X.10/32 forward-port port=443 protocol=tcp to-port=22'
+ssh -p 443 serverX.example.com
+semanage port -l
+semanage port -a -t port_label -p tcp|udp PORTNUMBER
+semanage port -a -t gopher_port_t -p tcp 71
+yum -y install selinux-policy-devel
+mandb
+man -k _selinux
+semanage port -d -t gopher_port_t -p tcp 71
+semanage port -m -t http_port_t -p tcp 71
+sudo systemctl restart httpd.service
+sudo systemctl status -l httpd.service
+sudo sealert -a /var/log/audit/audit.log
+sudo semanage port -l | grep http
+sudo semanage port -a -t http_port_t -p tcp 82
+curl http://serverX.example.com:82
+sudo firewall-cmd --permanent --add-port=82/tcp
+sudo ss -tulpn | grep sshd
+sudo systemctl restart sshd.service
+sudo systemctl status -l sshd.service
+sudo semanage port -a -t ssh_port_t -p tcp 999
+sudo firewall-cmd --permanent --zone=work --add-port=999/ tcp
+host -v -t A example.com
+host -v -t AAAA a.root-servers.net
+host -v -t A ipa-ca.server0.example.com
+host -v -t PTR 172.25.0.10
+host -v -t PTR 2001:503:ba3e::2:30
+host -v -t NS example.com
+host -v -t SOA example.com
+host -v -t MX example.com
+host -v -t TXT lwn.net
+host -v -t SRV _ldap._tcp.server0.example.com
+yum install -y unbound
+systemctl start unbound.service
+systemctl enable unbound.service
+dig +dnssec DNSKEY example.com
+unbound-checkconf
+systemctl restart unbound.service
+firewall-cmd --permanent --add-service=dns
+firewall-cmd --reload
+unbound-control dump_cache
+unbound-control load_cache < dump.out
+unbound-control flush www.example.com
+unbound-control flush_zone example.com
+dig @serverX.example.com A desktopX.example.com
+dig @serverX.example.com A serverX.example.com
+unbound-control flush serverX.example.com
+getent hosts example.com
+gethostip example.com
+dig @serverX.example.com A labhost1.example.com
+dig +tcp A example.com
+dig A example.com
+ssh example.com
+grep ^hosts: /etc/nsswitch.conf
+grep [[:space:]]example.com /etc/hosts
+grep ^nameserver /etc/resolv.conf
+dig @172.25.254.255 A example.com
+sudo systemctl restart NetworkManager
+dig @serverX.example.com A example.com
+dig @localhost A example.com
+dig @172.25.X.11 A example.com
+sudo ss -tulpn | grep -w 53
+sudo unbound-checkconf
+sudo systemctl restart unbound
+sudo grep ^[[:space:]]*access-control /etc/unbound/ unbound.conf
+postconf
+postconf inet_interfaces myorigin
+postconf -e 'myorigin = example.com'
+postconf -e "relayhost=[smtpX.example.com]"
+postconf -e "inet_interfaces=loopback-only"
+postconf -e "mynetworks=127.0.0.0/8 [::1]/128"
+postconf -e "myorigin=desktopX.example.com"
+postconf -e "mydestination="
+postconf -e "local_transport=error: local delivery disabled"
+systemctl restart postfix
+sudo -i
+mail -s "serverX null client" student@desktopX.example.com null client test
+mutt -f imaps://imapX.example.com
+visudo -f /etc/sudoers
+system-config-network
+git diff path/filename
+git add -A
+git status
+git commit -am "The commit for chagne"
+git push
+git pull
+git branch
+git branch newbranchname
+git checkout newbranchname
+git merge otherbranch
+git push --set-upstream origin newbranchname
+git remove -v
+docker images
+docker run docker/whalesay cowsay boo
+docker run docker/whalesay cowsay boo-boo
+docker pull centos
+docker save
+docker export
+man docker-save
+man docker-export
+vim /etc/yum.repos.d/mongodb.repo
+yum install mongo-10gen mongo-10gen-server
+yum install mongo-10gen mongo-10gen-server --exclude mongodb-org,mongodb-org-server
+yum install mongo-10gen-2.2.3 mongo-10gen-server-2.2.3 --exclude mongodb-org,mongodb-org-server
+service mongod start
+chkconfig mongod on
+service mongod stop
+service mongod restart
+mongo
+show dbs
+use rhlabsfullstack-dev
+show collections
+help
+docker ps
+docker run hello-world
+docker run -it ubuntu bash
+rvm use 2.2.4 --default
+gem sources --add https://ruby.taobao.org/ --remove https://rubygems.org/
+gem sources -l
+bundle config mirror.https://rubygems.org https://ruby.taobao.org
+git stash
+rvm list
+rhc create-app <app name> "http://cartreflect-claytondev.rhcloud.com/reflect?github=connyay/openshift-node-diy" mongodb-<v>
+git remote add rhc git@github.com:connyay/rh-labs-angular-fullstack.git
+git fetch rhc
+git reset --hard rhc/master
+git push origin -f
+uname -r
+lsb_release -a
+alternatives --set libbaccats.so /usr/lib64/libbaccats-{mysql|postgresql|sqlite3}.so
+docker run -i -v /tmp:/tmp -t centos /bin/bash
+git tag -d release01 && git push origin :refs/tags/release01
+ansible hostname -u root -m setup
+ansible vm-rhel7-3 -u root -m ping
+py.test
+py.test path/test_plugin_name.py::TestCaseClass::test_method
+py.test path/test_plugin_name.py
+py.test  --cov=telemetry
+git remote add origin git@github.com:****/***.git
+git push -u origin master
+gdb a.out
+gdb a.out core
+gdb a.out 1234
+gdb a.out --args 1 2 3
+(gdb) run/r
+(gdb) continue/c
+(gdb) list/l *address/[file:]function/line
+(gdb) disassemble address/function
+(gdb) print var
+(gdb) display var
+(gdb) next/n
+(gdb) step/s
+(gdb) finish
+(gdb) b *address/[file:]function/linenum
+(gdb)  b test.c:20 if x==0
+(gdb) hb *address/[file:]function/linenum
+(gdb) watch foo
+(gdb) watch foo mask 0xffff00ff
+(gdb) backtrace/bt
+(gdb) file
+(gdb) core-file
+(gdb) info proc
+(gdb) info sharedlib
+(gdb) info target
+(gdb) info registers
+(gdb) info threads
+(gdb) thread apply all bt [full]
+(gdb) set variable n = 10
+(gdb) print n = 9; print n=n+1
+(gdb) print $pc+=4
+git log tag1..tag2
+git log tag1..tag2 --stat
+git log tag1..tag2 --stat --pretty=short
+git show b3c87ac5d9
+git diff
+git stash list
+git stash pop
+git check -- setup.py
+git checkout mytag
+git checkout master
+git checkout -b new_br
+git checkout test_br
+git checkout -- f.c
+git reset HEAD f.c
+git merge master new_br
+git rebase master
+nodename
+/
+//
+.
+..
+@
+bookstore
+/bookstore
+bookstore/book
+//book
+bookstore//book
+//@lang
+/bookstore/book[1]
+/bookstore/book[last()]
+/bookstore/book[last()-1]
+/bookstore/book[position()<3]
+//title[@lang]
+//title[@lang='eng']
+/bookstore/book[price>35.00]
+/bookstore/book[price>35.00]/title
+*
+@*
+node()
+/bookstore/*
+//*
+//title[@*]
+//book/title | //book/price
+//title | //price
+/bookstore/book/title | //price
+axis::div[predicate]
+ancestor::
+ancestor-or-self::
+attribute::
+child::
+descendant::
+descendant-or-self::
+following::
+namespace::
+parent::
+preceding::
+preceding-sibling::
+self::
+child::book
+attribute::lang
+child::*
+attribute::*
+child::text()
+child::node()
+descendant::book
+ancestor::book
+ancestor-or-self::book
+child::*/child::price
+/bookstore/book/title
+/bookstore/book[1]/title
+/bookstore/book/price/text()
+/bookstore/book[price>35]/price
+/bookstore/book[price>35]/title
+git checkout commithashstring
+ansible <pattern_goes_here> -m <module_name> -a <arguments>
+ansible webservers -m service -a "name=httpd state=restarted"
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+python -m SimpleHTTPServer 8080
+find . -name ".DS_Store" -delete
+git pull; forever stop server/app.js; grunt clean; grunt build;forever start server/app.js
+export NODE_ENV='production'; export PORT=3000;
+export PORT=3000
+netstat -tulpn
+tar -xf file.tar
+grep -E "^Listen|^ *ProxyPass"
+git tag -a tagname commitString
+gem sources --remove https://ruby.taobao.org/ --add https://rubygems.org/
+bundle config mirror.https://rubygems.org https://gems.ruby-china.org
+bundle exec jekyll serve
+rpm -Uvh http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm
+scp jshi@192.168.122.1:/project/my/vm/rhel7u2.repo /etc/yum.repos.d/
+mandb
+man -k ''
+apropos .
+ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f pulse -ac 2 -i default output.mkv
+ffmpeg -video_size 1920x1080 -framerate 25 -f x11grab -i :0.0 -f alsa -ac 2 -i hw:0 output.mkv
+subscription-manager repos --enable rhel-7-server-extras-rpms
+rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+ssh-keygen -f tower_rsa
+ssh-copy-id -i tower_rsa root@jshi-test-01.rhev
+ssh -i tower_rsa root@jshi-test-01.rhev
+ffmpeg -i test-simple-record.mkv -pix_fmt rgb24 -vf fps=10,scale=1920:-1:flags=lanczos test-simple-record2.gif
+ffmpeg -i rhiou1.webm -pix_fmt rgb24 -vf fps=10,scale=1920:-1:flags=lanczos rhiou.gif
+scrapy genspider example example.com
+scrapy crawl quotes -o quotes.jl
+./bin/kibana plugin --install elastic/sense
+./bin/kibana
+scrapy startproject tutorial
+oc login -u system:admin -n default --config=<homedir>/openshift.local.config/master/admin.kubeconfig
+yum install \\* --skip-broken
+find . -name "*.deb" -exec cp {} ~/debs \\;
