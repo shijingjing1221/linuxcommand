@@ -1,0 +1,5 @@
+netstat -tulpn
+firewall-cmd --permanent --add-service=http --add-service=https
+tar --exclude=/proc,/mnt,/tmp,/backupdata -jcvp -f /backupdata/system.tar.bz2 /
+rsync -aAXvz /*  --exclude={/dev/*,/proc/*,/sys/*,/tmp/*}
+mysql --skip-column-names -E -u root -e 'SHOW DATABASES'

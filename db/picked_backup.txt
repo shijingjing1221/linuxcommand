@@ -1,0 +1,32 @@
+tar -cvpzf backup.tar.gz --exclude=/proc --exclude=/mnt --exclude=/sys --exclude=/backup.tar.gz /
+tar --exclude=/proc,/mnt,/tmp,/backupdata -jcvp -f /backupdata/system.tar.bz2 /
+tar -N '2009-06-01' -jpcv -f /backupdata/home.tar.bz2 /home
+find /boot | cpio -ocvB > /tmp/boot.cpio
+rsync -aAXvz /*  --exclude={/dev/*,/proc/*,/sys/*,/tmp/*}
+firewall-cmd --permanent --add-service=http --add-service=https
+semanage fcontext -a -t httpd_sys_content_t '/new/location(/.*)?'
+setfacl -R -m d:g:webmasters:rwx /var/www/html
+restorecon -Rv /srv/
+find /etc -type f -mtime -1
+mysql --skip-column-names -E -u root -e 'SHOW DATABASES'
+mysql -u root -e 'SHOW DATABASES'
+bash -x ./filesize
+usermod -aG wheel elvis
+semanage fcontext -a -t httpd_sys_content_t '/virtual(/.*)?'
+yum-config-manager --enable rhel-7-server-debug-rpms
+yum-config-manager --add-repo="http://dl.fedoraproject.org/pub/epel/7/ x86_64/"
+rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+yum-config-manager --add-repo="http://content.example.com/ rhel7.0/x86_64/rht"
+yum-config-manager --disable content.example.com_rhel7.0_x86_64_rht
+swapon -a
+swapon -s
+ss -ta
+ss -lt
+journalctl --since 9:00:00 --until 9:30:00
+journalctl --since 9:00:00 _SYSTEMD_UNIT="sshd.service"
+mount -t cifs -o guest //serverX/docs /public/docs
+mount -t cifs -o username=watson //serverX/cases /bakerst/
+firewall-cmd --permanent --add-rich-rule='rule protocol value=esp drop'
+firewall-cmd --permanent --zone=vnc --add-rich-rule='rule family=ipv4 source address=192.168.1.0/24 port port=7900-7905 protocol=tcp accept'
+semanage port -d -t gopher_port_t -p tcp 71
+rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm

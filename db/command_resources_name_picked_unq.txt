@@ -1,59 +1,21 @@
 yum install -y targetcli
-systemctl enable target; systemctl start target
 firewall-cmd --permanent --add-port=3260/tcp
 firewall-cmd --reload
 fdisk /dev/vdb
 pvcreate /dev/vdb1
 vgcreate iSCSI_vg /dev/vdb1
 vgdisplay iSCSI_vg
-lvcreate -n disk1_lv -L 100m iSCSI_vg
 lvdisplay iSCSI_vg/disk1_lv
-targetcli /backstores/block create block1 /dev/vdb
-targetcli /iscsi create iqn.2014-06.com.example:remotedisk1
-targetcli /iscsi/iqn.2014-06.com.example:remotedisk1/tpg1/portals create 172.25.0.11
-targetcli saveconfig
-systemctl restart iscsi
-iscsiadm -m discovery -t sendtargets -p target_server[:port]
-iscsiadm -m node -T iqn.2014-06.com.example:serverX [-p target_server[:port]] -l
-iscsiadm -m node -T iqn.2012-04.com.example:example [-p target_server[:port]] -u
-iscsiadm -m node -T iqn.2012-04.com.example:example [-p target_server[:port]] -o delete
 yum install -y iscsi-initiator-utils
-iscsiadm -m discovery -t st -p 172.25.X.11
-iscsiadm -m node -T iqn.2014-06.com.example:serverX -p 172.25.X.11 -l
 tail /var/log/messages
-iscsiadm -m session -P 3
 less iqn.2014-06.com.example:serverX/172.25.X.11,3260,1/default
-iscsiadm -m node -T iqn.2014-06.com.example:serverX -p 172.25.X.11 -u
-iscsiadm -m node -T iqn.2014-06.com.example:serverX -p 172.25.X.11 -o delete
-mkfs -t xfs /dev/sda; blkid /dev/sda; mkdir /iscsidisk; vim /etc/fstab; mount /iscsidisk; df -h /iscsidisk
-nmcli dev status
-nmcli con show
-nmcli con show name
-nmcli con add con-name name ...
-nmcli con mod name ...
-nmcli con reload
-nmcli con up name
-nmcli dev dis dev
-nmcli con del name
 ip addr show
-hostnamectl set-hostname ...
 ip link
-nmcli con add con-name eno1 type ethernet ifname eno1
 ip addr show eno1
-nmcli con show eno1 | grep ipv4
-nmcli con mod eno1 ipv4.addresses '192.168.0.1/24'
-nmcli con mod eno1 ipv4.method manual
-nmcli con down eno1
-nmcli con up eno1
 ip addr show dev eno1
 ip route
 ping6 fe80::211:22ff:feaa:bbcc%eth0
 ping6 ff02::1%eth0
-nmcli con add con-name eno2 type ethernet ifname eno2
-nmcli con add con-name eno2 type ethernet ifname eno2 ip6 2001:db8:0:1::c000:207/64 gw6 2001:db8:0:1::1 ip4 192.0.2.7/24 gw4 192.0.2.1
-nmcli con show static-eth0 | grep ipv6
-nmcli con mod static-eth0 ipv6.address "2001:db8:0:1::a00:1/64 2001:db8:0:1::1"
-nmcli con mod static-eth0 +ipv6.dns 2001:4860:4860::8888
 ip addr show eth0
 ip -6 route show
 ping6 -c 1 fe80::f482:dbff:fe25:6a9f%eth1
@@ -63,9 +25,6 @@ ss -A inet -n
 netstat -46n
 SELECT * FROM product;
 yum groupinstall mariadb mariadb-client -y
-systemctl start mariadb
-systemctl enable mariadb
-systemctl status mariadb
 mysql_secure_installation
 firewall-cmd --permanent --add-service=mysql; firewall-cmd --reload;
 ss -tulpn | grep mysql
@@ -75,7 +34,6 @@ show databases;
 CREATE DATABASE inventory;USE inventory;
 SHOW TABLES;
 DESCRIBE servers;
-INSERT INTO product(name,price,stock,id_category,id_manufacturer) VALUES ('SDSSDP-128G-G252.5',82.04,30,3,1)
 DELETE FROM product WHERE id = 1;
 UPDATE product SET price=89.90, stock=60 WHERE id = 5;
 select name,price,stokck FROM product WHERE price > 100;
@@ -96,15 +54,11 @@ mysqladmin variables | grep datadir
 df /var/lib/mysql
 vgdisplay vg0 | grep Free
 FLUSH TABLES WITH READ LOCK;
-lvcreate -L20G -s -n mariadb-backup /dev/vg0/mariadb
 UNLOCK TABLES;
 umount /mnt/snapshot;lvremove /dev/vg0/mariadb-backup;
-systemctl stop mariadb;mysqladmin variables | grep datadir;
 mysql -u root legacy < /home/student/mariadb.dump
 yum -y install httpd httpd-manual
 yum install httpd mod_ssl
-systemctl enable httpd.service
-systemctl start httpd.service
 firewall-cmd --permanent --add-service=http --add-service=https; firewall-cmd --reload
 firewall-cmd --permanent --add-service=http --add-service=https
 semanage fcontext -a -t httpd_sys_content_t '/new/location(/.*)?'
@@ -114,7 +68,6 @@ chgrp webmasters /new/docroot
 restorecon -Rv /srv/
 chmod 0600 w*X.key
 sed -i 's/wwwX/webappX/g' /etc/httpd/conf.d/webappX.conf
-systemctl status -l httpd.service
 firewall-cmd --list-all
 firewall-cmd --permanent --add-service=http;sudo firewall-cmd --reload
 yum list php; sudo yum install php;
@@ -192,8 +145,6 @@ mysql -u username -ppassword -D dbname -e "DROP TABLE tablename"
 sed -i -e 's/\\r$//' script.sh
 sed -i '26d' ~/.ssh/known_hosts
 yum install httpd httpd-manual
-systemctl start nfs-server
-systemctl enable nfs-server
 exportfs -r
 firewall-cmd --permanent --add-service=nfs; firewall-cmd --reload
 mount serverX:/myshare /mnt/nfsexport
@@ -204,12 +155,6 @@ man exportfs 8
 man exports 5
 chown nfsnobody /nfsshare
 mount -a
-wget -O /etc/krb5.keytab http://classroom.example.com/pub/ keytabs/serverX.keytab
-systemctl start nfs-secure-server
-systemctl enable nfs-secure-server
-wget -O /etc/krb5.keytab http://classroom.example.com/pub/ keytabs/desktopX.keytab
-systemctl start nfs-secure
-systemctl enable nfs-secure
 mount -o sec=krb5p,v4.2 serverX:/securedexport /mnt/securedexport
 chcon -t public_content_t /securenfs/testfile.txt
 chown ldapuserX:ldapuserX /securenfs/testfile.txt
@@ -226,8 +171,6 @@ useradd -s /sbin/nologin -G marketing brian
 smbpasswd -a brian
 useradd -s /sbin/nologin rob
 smbpasswd -a rob
-systemctl start smb nmb
-systemctl enable smb nmb
 firewall-cmd --permanent --add-service=samba; firewall-cmd --reload
 yum -y install cifs-utils
 mount -o username=brian //serverX/smbshare /mnt/brian
@@ -236,28 +179,12 @@ testparm
 su frank; cifscreds add serverX
 su - jane; cifscreds add serverX
 mount /mnt/multiuser
-nmcli con show --active
-nmcli con add con-name eno2 type ethernet ifname eno2 ip4 192.168.0.5/24 gw4 192.168.0.254
-nmcli con up static-eth0
-nmcli dev disconnect device
-nmcli dev dis eth0
-nmcli con show static-eth0
-nmcli con mod name
-nmcli con mod static-eth0 ipv4.addresses "192.0.2.2/24 192.0.2.254"
-nmcli con mod static-eth0 +ipv4.dns 192.0.2.1
 hostname
-hostnamectl set-hostname demo.example.com
-hostnamectl status
-nmcli con show eno1|grep ipv4
-nmcli con down eno1; nmcli con up eno1
 ping otherhost
 fdisk -l
 dump -0uf /backup-files/sda1.dump /dev/sda1
 dump -0uf /backup-files/sda2.dump /dev/sda2
 dump -0uf /backup-files/sda3.dump /dev/sda3
-mkfs.ext3 /dev/sda1
-mkfs.ext3 /dev/sda2
-mkfs.ext3 /dev/sda3
 e2label /dev/sda1 /boot1
 e2label /dev/sda2 /
 e2label /dev/sda3 /data
@@ -379,7 +306,6 @@ setfacl -x d:u:name directory
 setfacl -k /directory
 setfacl -b /directory
 ps axZ
-systemctl start httpd
 ps -ZC httpd
 getenforce
 getsebool -a
@@ -498,12 +424,10 @@ mount UUID="46f543fd-78c9-4526-a857-244811be2d88" /mnt/mydata
 umount /mnt/mydata
 partprobe /dev/vdb
 gdisk /dev/vdb
-mkfs -t xfs /dev/vdb1
 mount /dev/vdb1 /mnt
 mount | grep vdb1
 blkid /dev/vdb1
 partprobe
-mkfs -t ext4 /dev/vdb1
 mount | grep -w /archive
 mount | grep ^/
 mkswap /dev/vdb1
@@ -512,80 +436,21 @@ swapon /dev/vdb1
 swapon -a
 swapon -s
 swapoff /dev/vdb1
-systemctl -t help
-systemctl status name.type
-systemctl status name
-systemctl status sshd.service
-systemctl
-systemctl --type=service
-systemctl status rngd.service -l
-systemctl is-active sshd
-systemctl is-enabled sshd
-systemctl list-units --type=service
-systemctl list-units --type=service --all
-systemctl list-unit-files --type=service
-systemctl --failed --type=service
-systemctl list-units --type=socket --all
-systemctl status chronyd
 ps -p PID
-systemctl status sshd
-systemctl reload sshd.service
 ps -up PID
-systemctl list-dependencies UNIT
-systemctl list-dependencies UNIT --reverse
-systemctl mask network
-systemctl unmask network
-systemctl list-dependencies graphical.target | grep target
-systemctl list-units --type=target --all
-systemctl list-unit-files --type=target --all
-systemctl isolate multi-user.target
-systemctl get-default
-systemctl set-default graphical.target
-systemctl set-default multi-user.target
-systemctl reboot
 chown :systemd-journal /var/log/journal
 killall -USR1 systemd-journald
 journalctl -b-1 -p err
-systemctl enable debug-shell.service
 ip -s link show eth0
 ping -c3 172.25.X.254
 tracepath access.redhat.com
 ss -ta
 ip addr
 ss -lt
-nmcli con show "static-eth0"
-nmcli dev show eth0
-nmcli con add con-name "default" type ethernet ifname eth0
-nmcli con add con-name "static" ifname eth0 autoconnect no type ethernet ip4 172.25.X.10/24 gw4 172.25.X.254
-nmcli con up "static"
-nmcli con up "default"
-nmcli con add help
-nmcli con show "static"
-nmcli con mod "static" connection.autoconnect no
-nmcli con mod "static" ipv4.dns 172.25.X.254
-nmcli con mod "static" +ipv4.dns 8.8.8.8
-nmcli con mod "static" ipv4.addresses "172.25.X.10/24 172.25.X.254"
-nmcli con mod "static" +ipv4.addresses 10.10.10.10/16
-nmcli con show "System eth0"
-nmcli con add con-name "static-eth0" ifname eth0 type ethernet ip4 172.25.X.11/24 gw4 172.25.X.254
-nmcli con mod "static-eth0" ipv4.dns 172.25.254.254
-nmcli con up "static-eth0"
 ping -c3 172.25.254.254
-nmcli con mod "System eth0" connection.autoconnect no
 reboot
-nmcli con up "System eth0"
-nmcli con down "System eth0"
-hostnamectl
-hostnamectl set-hostname desktopX.example.com
 getent hosts hostname
-nmcli con mod ID ipv4.dns IP
-nmcli con down ID
-nmcli con up ID
-nmcli con mod ID +ipv4.dns IP
-host classroom.example.com
 host 172.25.254.254
-nmcli con mod "System eth0" ipv4.ignore-auto-dns yes
-hostnamectl set-hostname serverX.example.com
 hostname testname
 host class
 getent hosts class
@@ -593,7 +458,6 @@ ping -c3 class
 tail -f /path/to/file
 tail -f /var/log/secure
 logger -p local7.notice "Log entry created on serverX"
-systemctl restart rsyslog
 tail -f /var/log/messages-debug
 logger -p user.debug "Debug Message Test" 2.3.
 journalctl
@@ -619,7 +483,6 @@ timedatectl list-timezones
 timedatectl set-timezone America/Phoenix
 timedatectl set-time 9:00:00
 timedatectl set-ntp true
-systemctl restart chronyd
 chronyc sources -v
 tzselect
 timedatectl set-timezone America/Port-au-Prince
@@ -628,8 +491,6 @@ journalctl --since 9:00:00 --until 9:30:00
 logger -p authpriv.alert "Logging test authpriv.alert"
 tail /var/log/auth-errors
 vgcreate vg-alpha /dev/vda2 /dev/vdb1
-lvcreate -n hercules -L 2G vg-alpha
-mkfs -t xfs /dev/vg-alpha/hercules
 umount /mnt/hercules
 lvremove /dev/vg-alpha/hercules
 vgremove vg-alpha
@@ -639,8 +500,6 @@ vgdisplay vg-alpha
 lvdisplay /dev/vg-alpha/hercules
 pvcreate /dev/vdb1 /dev/vdb2
 vgcreate shazam /dev/vdb1 /dev/vdb2
-lvcreate -n storage -L 400M shazam
-mkfs -t xfs /dev/shazam/storage
 fdisk -l /dev/vdb
 pvdisplay /dev/vdb2
 vgdisplay shazam
@@ -676,13 +535,10 @@ mount serverX:/ /mountpoint
 showmount -e serverX
 mount -t nfs -o sync serverX:/share /mountpoint
 umount /mountpoint
-wget -O /etc/krb5.keytab http://classroom.example.com/ pub/keytabs/desktopX.keytab
 mount -o sync,sec=sys serverX:/shares/manual /mnt/manual
 ssh ldapuserX@localhost
 umount /mnt/manual
 yum -y install autofs
-systemctl enable autofs
-systemctl start autofs
 smbclient -L //serverX
 mount -t cifs -o guest //serverX/share /mountpoint
 mount -t cifs -o guest //serverX/docs /public/docs
@@ -703,69 +559,29 @@ firewall-cmd --permanent --zone=internal --add-source=192.168.0.0/24
 firewall-cmd --permanent --zone=internal --add-service=mysql
 yum -y install httpd mod_ssl
 bash -c "echo 'I am alive' > /var/www/html/index.html"
-systemctl enable httpd
-systemctl mask iptables
-systemctl mask ip6tables
-systemctl status firewalld
 curl -k http://serverX.example.com
 curl -k https://serverX.example.com
-systemctl enable firewalld
-systemctl start firewalld
 firewall-cmd --get-default-zone
 firewall-cmd --set-default-zone public
 firewall-cmd --permanent --zone=public --list-all
 firewall-cmd --permanent --zone=public --add-port 8080/tcp
 system-configkickstart
-curl http://classroom.example.com/pub/materials/lab-kickstart -o lab-kickstart
 chmod 755 lab-kickstart
 grep --color -E "vmx|svm" /proc/cpuinfo
 grep --color -E "nx" /proc/cpuinfo
 yum install qemu-kvm qemu-img
 yum install virt-manager libvirt libvirt-python python-virtinst libvirt-client
-nmcli con add type team con-name CNAME ifname INAME [config JSON]
-nmcli con add type team con-name team0 ifname team0 config '{"runner": {"name": "loadbalance"}}'
-nmcli con mod team0 ipv4.addresses 1.2.3.4/24
-nmcli con mod team0 ipv4.method manual
-nmcli con add type team-slave con-name CNAME ifname INAME master TEAM
-nmcli con add type team-slave ifname eth1 master team0
-nmcli con add type team-slave ifname eth2 master team0 con-name team0- eth2
-nmcli dev dis INAME
-nmcli con up CNAME
-nmcli con up team0
-nmcli dev dis eth2
 teamdctl team0 state
 -i
-nmcli con add type team con-name team0 ifname team0 config '{"runner": {"name": "activebackup"}}'
-nmcli con mod team0 ipv4.addresses '192.168.0.100/24'
-nmcli con add type team-slave con-name team0-port1 ifname eno1 master team0
-nmcli con add type team-slave con-name team0-port2 ifname eno2 master team0
 ping -I team0 192.168.0.254
-nmcli dev dis eno1
-nmcli con up team0-port1
-nmcli dev dis eno2
-nmcli con up team0-port2
-nmcli con mod IFACE team.config JSON-configuration-file-or-string
-nmcli con mod team0 team.config /tmp/team.conf
 teamnl team0 ports
 teamnl team0 getoption activeport
 teamnl team0 setoption activeport 3
 teamdctl team0 config dump
-nmcli con add type bridge con-name br0 ifname br0
-nmcli con add type bridge-slave con-name br0-port1 ifname eth1 master br0
-nmcli con add type bridge-slave con-name br0-port2 ifname eth2 master br0
 brctl show
-nmcli con add type bridge con-name br1 ifname br1
-nmcli con mod br1 ipv4.addresses 192.168.0.100/24
-nmcli con mod br1 ipv4.method manual
-nmcli con add type bridge-slave con-name br1-port0 ifname eno1 master br1
 ping -I br1 192.168.0.254
-nmcli dev dis team0
-systemctl stop NetworkManager
-systemctl disable NetworkManager
 tail ifcfg-team0
-systemctl restart network
 ping -I brteam0 192.168.0.254
-systemctl status firewalld.service
 firewall-cmd --permanent --zone=work --addsource= 172.25.X.0/24
 firewall-cmd --permanent --zone=work --addservice= https
 firewall-cmd --get-active-zones
@@ -775,7 +591,6 @@ firewall-cmd --direct --permanent --add-chain ipv4 raw blacklist
 firewall-cmd --direct --permanent --add-rule ipv4 raw PREROUTING 0 -s 192.168.0.0/24 -j blacklist
 firewall-cmd --direct --permanent --add-rule ipv4 raw blacklist 0 -m limit --limit 1/min -j LOG --log-prefix "blacklisted "
 firewall-cmd --direct --permanent --add-rule ipv4 raw blacklist 1 -j DROP
-firewall-cmd --permanent --zone=classroom --add-rich-rule='rule family=ipv4 source address=192.168.0.11/32 reject'
 firewall-cmd --add-rich-rule='rule service name=ftp limit value=2/m accept'
 firewall-cmd --permanent --add-rich-rule='rule protocol value=esp drop'
 firewall-cmd --permanent --zone=vnc --add-rich-rule='rule family=ipv4 source address=192.168.1.0/24 port port=7900-7905 protocol=tcp accept'
@@ -798,15 +613,12 @@ mandb
 man -k _selinux
 semanage port -d -t gopher_port_t -p tcp 71
 semanage port -m -t http_port_t -p tcp 71
-systemctl restart httpd.service
 sealert -a /var/log/audit/audit.log
 semanage port -l | grep http
 semanage port -a -t http_port_t -p tcp 82
 curl http://serverX.example.com:82
 firewall-cmd --permanent --add-port=82/tcp
 ss -tulpn | grep sshd
-systemctl restart sshd.service
-systemctl status -l sshd.service
 semanage port -a -t ssh_port_t -p tcp 999
 firewall-cmd --permanent --zone=work --add-port=999/ tcp
 host -v -t A example.com
@@ -820,11 +632,8 @@ host -v -t MX example.com
 host -v -t TXT lwn.net
 host -v -t SRV _ldap._tcp.server0.example.com
 yum install -y unbound
-systemctl start unbound.service
-systemctl enable unbound.service
 dig +dnssec DNSKEY example.com
 unbound-checkconf
-systemctl restart unbound.service
 firewall-cmd --permanent --add-service=dns
 unbound-control dump_cache
 unbound-control load_cache < dump.out
@@ -843,12 +652,10 @@ grep ^hosts: /etc/nsswitch.conf
 grep [[:space:]]example.com /etc/hosts
 grep ^nameserver /etc/resolv.conf
 dig @172.25.254.255 A example.com
-systemctl restart NetworkManager
 dig @serverX.example.com A example.com
 dig @localhost A example.com
 dig @172.25.X.11 A example.com
 ss -tulpn | grep -w 53
-systemctl restart unbound
 grep ^[[:space:]]*access-control /etc/unbound/ unbound.conf
 postconf
 postconf inet_interfaces myorigin
@@ -859,7 +666,6 @@ postconf -e "mynetworks=127.0.0.0/8 [::1]/128"
 postconf -e "myorigin=desktopX.example.com"
 postconf -e "mydestination="
 postconf -e "local_transport=error: local delivery disabled"
-systemctl restart postfix
 mail -s "serverX null client" student@desktopX.example.com null client test
 mutt -f imaps://imapX.example.com
 system-config-network

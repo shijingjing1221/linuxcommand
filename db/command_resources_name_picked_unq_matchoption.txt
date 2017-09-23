@@ -1,29 +1,7 @@
 yum install -y targetcli
 firewall-cmd --permanent --add-port=3260/tcp
 firewall-cmd --reload
-lvcreate -n disk1_lv -L 100m iSCSI_vg
-targetcli /iscsi create iqn.2014-06.com.example:remotedisk1
-targetcli /iscsi/iqn.2014-06.com.example:remotedisk1/tpg1/portals create 172.25.0.11
-iscsiadm -m discovery -t sendtargets -p target_server[:port]
-iscsiadm -m node -T iqn.2014-06.com.example:serverX [-p target_server[:port]] -l
-iscsiadm -m node -T iqn.2012-04.com.example:example [-p target_server[:port]] -u
-iscsiadm -m node -T iqn.2012-04.com.example:example [-p target_server[:port]] -o delete
 yum install -y iscsi-initiator-utils
-iscsiadm -m discovery -t st -p 172.25.X.11
-iscsiadm -m node -T iqn.2014-06.com.example:serverX -p 172.25.X.11 -l
-iscsiadm -m session -P 3
-less iqn.2014-06.com.example:serverX/172.25.X.11,3260,1/default
-iscsiadm -m node -T iqn.2014-06.com.example:serverX -p 172.25.X.11 -u
-iscsiadm -m node -T iqn.2014-06.com.example:serverX -p 172.25.X.11 -o delete
-mkfs -t xfs /dev/sda; blkid /dev/sda; mkdir /iscsidisk; vim /etc/fstab; mount /iscsidisk; df -h /iscsidisk
-nmcli con add con-name name ...
-hostnamectl set-hostname ...
-nmcli con add con-name eno1 type ethernet ifname eno1
-nmcli con add con-name eno2 type ethernet ifname eno2
-nmcli con add con-name eno2 type ethernet ifname eno2 ip6 2001:db8:0:1::c000:207/64 gw6 2001:db8:0:1::1 ip4 192.0.2.7/24 gw4 192.0.2.1
-nmcli con show static-eth0 | grep ipv6
-nmcli con mod static-eth0 ipv6.address "2001:db8:0:1::a00:1/64 2001:db8:0:1::1"
-nmcli con mod static-eth0 +ipv6.dns 2001:4860:4860::8888
 ip -6 route show
 ping6 -c 1 fe80::f482:dbff:fe25:6a9f%eth1
 ss -A inet -n
@@ -33,11 +11,8 @@ firewall-cmd --permanent --add-service=mysql; firewall-cmd --reload;
 ss -tulpn | grep mysql
 mysql -u root
 mysql -u root -h localhost -p
-INSERT INTO product(name,price,stock,id_category,id_manufacturer) VALUES ('SDSSDP-128G-G252.5',82.04,30,3,1)
 mysqldump -u root -p inventory > /backup/inventory.dump
 mysqldump -u root -p --all-databases > /backup/mariadb.dump
-lvcreate -L20G -s -n mariadb-backup /dev/vg0/mariadb
-umount /mnt/snapshot;lvremove /dev/vg0/mariadb-backup;
 mysql -u root legacy < /home/student/mariadb.dump
 yum -y install httpd httpd-manual
 firewall-cmd --permanent --add-service=http --add-service=https; firewall-cmd --reload
@@ -47,10 +22,8 @@ setfacl -R -m g:webmasters:rwX /var/www/html
 setfacl -R -m d:g:webmasters:rwx /var/www/html
 restorecon -Rv /srv/
 sed -i 's/wwwX/webappX/g' /etc/httpd/conf.d/webappX.conf
-systemctl status -l httpd.service
 firewall-cmd --list-all
 firewall-cmd --permanent --add-service=http;sudo firewall-cmd --reload
-yum install php-mysql
 restorecon -Rv /srv/webappX
 mount -oremount,rw /sysroot
 TAROUTPUT=$(tar cvf /tmp/incremental_backup.tar $(find /etc -type f -mtime -1))
@@ -64,7 +37,6 @@ mysql --skip-column-names -E -u root -e 'SHOW DATABASES' | grep -v '^*' | grep -
 for DBNAME in $(mysql $FMTOPTIONS -u $DBUSER -e "$COMMAND" | grep -v ^* | grep -v information_schema | grep -v performance_schema); do
 FIRSTNAME=$(echo $ENTRY | cut -d: -f1)
 FIRSTINITIAL=$(echo $FIRSTNAME | cut -c 1 | tr 'A-Z' 'a-z')
-LOWERLASTNAME=$(echo $LASTNAME | tr 'A-Z' 'a-z')
 useradd $ACCTNAME -c "$FIRSTNAM $LASTNAME"
 TIER1COUNT=$(grep -c :1$ $NEWUSERSFILE)
 [ 1 -eq 1 ]; echo $?
@@ -78,18 +50,9 @@ mysql -h $OPENSHIFT_MYSQL_DB_HOST -P ${OPENSHIFT_MYSQL_DB_PORT:-3306} -u ${OPENS
 mysql -u username -ppassword -D dbname -e "DROP TABLE tablename"
 sed -i -e 's/\\r$//' script.sh
 sed -i '26d' ~/.ssh/known_hosts
-yum install httpd httpd-manual
-systemctl start nfs-server
-systemctl enable nfs-server
 exportfs -r
 firewall-cmd --permanent --add-service=nfs; firewall-cmd --reload
 mount -a
-wget -O /etc/krb5.keytab http://classroom.example.com/pub/ keytabs/serverX.keytab
-systemctl start nfs-secure-server
-systemctl enable nfs-secure-server
-wget -O /etc/krb5.keytab http://classroom.example.com/pub/ keytabs/desktopX.keytab
-systemctl start nfs-secure
-systemctl enable nfs-secure
 mount -o sec=krb5p,v4.2 serverX:/securedexport /mnt/securedexport
 chcon -t public_content_t /securenfs/testfile.txt
 yum -y install samba
@@ -106,13 +69,6 @@ yum -y install cifs-utils
 mount -o username=brian //serverX/smbshare /mnt/brian
 mount -o username=rob //serverX/smbshare /mnt/rob
 su - jane; cifscreds add serverX
-nmcli con show --active
-nmcli con add con-name eno2 type ethernet ifname eno2 ip4 192.168.0.5/24 gw4 192.168.0.254
-nmcli con up static-eth0
-nmcli con show static-eth0
-nmcli con mod static-eth0 ipv4.addresses "192.0.2.2/24 192.0.2.254"
-nmcli con mod static-eth0 +ipv4.dns 192.0.2.1
-hostnamectl set-hostname demo.example.com
 fdisk -l
 dump -0uf /backup-files/sda1.dump /dev/sda1
 dump -0uf /backup-files/sda2.dump /dev/sda2
@@ -134,10 +90,7 @@ mt -f /dev/st0 rewind
 tar -xvf /dev/st0 /mnt/sysimage
 rsync -aAXvz /*  --exclude={/dev/*,/proc/*,/sys/*,/tmp/*}
 dd if=/dev/sda | gzip -9 > /mnt/external/filename.img.gz
-ssh-keygen
-ssh-copy-id serverX
 su -
-ln /usr/share/doc/qemu-kvm/qmp-commands.txt /root/qmpmanual. txt
 ln -s /tmp /root/tempdir
 su - <username>
 tail -5 /var/log/messages
@@ -159,8 +112,6 @@ chage -M 90 romeo
 chage -d 0 romeo
 chage -E 2014-08-02 romeo
 yum -y install authconfig-gtk sssd krb5-workstation
-authconfig-gtk
-ipa-client-install
 yum -y install realmd
 realm permit --realm domain.example.com --all
 realm permit --realm domain.example.com DOMAIN\\\\Itchy DOMAIN\\ \\Scratchy
@@ -177,7 +128,6 @@ chage -l bboop
 chage -d 0 sspade
 yum -y install ipa-client
 ipa-client-install --domain=serverX.example.com --nontp --mkhomedir
-chmod go-rw file1
 chmod -R g+rwX demodir
 chown -R student foodir
 setfacl -m u:name:rX file
@@ -244,65 +194,29 @@ subscription-manager register --username=yourusername -- password=yourpassword
 subscription-manager list --available | less
 subscription-manager attach --auto
 subscription-manager list --consumed
-subscription-manager unregister
 uname -r
 uname -a
 tail -5 /var/log/yum.log
 yum install -y gnuplot
-yum remove gnuplot-common
 yum-config-manager --enable rhel-7-server-debug-rpms
 yum-config-manager --add-repo="http://dl.fedoraproject.org/pub/epel/7/ x86_64/"
 rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
-yum install http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epelrelease- 7-2.noarch.rpm
 yum-config-manager --add-repo="http://content.example.com/ rhel7.0/x86_64/rht"
 yum-config-manager --disable content.example.com_rhel7.0_x86_64_rht
 yum update -y
 yum -y install rht-system
-mount UUID="46f543fd-78c9-4526-a857-244811be2d88" /mnt/mydata
-mkfs -t xfs /dev/vdb1
-mkfs -t ext4 /dev/vdb1
 mount | grep -w /archive
 swapon -a
 swapon -s
-systemctl -t help
-systemctl --type=service
-systemctl status rngd.service -l
-systemctl is-active sshd
-systemctl is-enabled sshd
-systemctl list-units --type=service
-systemctl list-units --type=service --all
-systemctl list-unit-files --type=service
-systemctl --failed --type=service
-systemctl list-units --type=socket --all
 ps -p PID
 ps -up PID
-systemctl list-dependencies UNIT
-systemctl list-dependencies UNIT --reverse
-systemctl list-dependencies graphical.target | grep target
-systemctl list-units --type=target --all
-systemctl list-unit-files --type=target --all
-systemctl isolate multi-user.target
-systemctl get-default
-systemctl set-default graphical.target
-systemctl set-default multi-user.target
-chown :systemd-journal /var/log/journal
 killall -USR1 systemd-journald
 journalctl -b-1 -p err
-systemctl enable debug-shell.service
 ip -s link show eth0
 ping -c3 172.25.X.254
 ss -ta
 ss -lt
-nmcli con show "static-eth0"
-nmcli con add con-name "default" type ethernet ifname eth0
-nmcli con add con-name "static" ifname eth0 autoconnect no type ethernet ip4 172.25.X.10/24 gw4 172.25.X.254
-nmcli con add con-name "static-eth0" ifname eth0 type ethernet ip4 172.25.X.11/24 gw4 172.25.X.254
-nmcli con mod "static-eth0" ipv4.dns 172.25.254.254
-nmcli con up "static-eth0"
 ping -c3 172.25.254.254
-hostnamectl set-hostname desktopX.example.com
-nmcli con mod "System eth0" ipv4.ignore-auto-dns yes
-hostnamectl set-hostname serverX.example.com
 ping -c3 class
 tail -f /path/to/file
 tail -f /var/log/secure
@@ -319,35 +233,15 @@ journalctl -p warning
 journalctl --since 9:05:00 --until 9:15:00
 journalctl --since 9:00:00 _SYSTEMD_UNIT="sshd.service"
 journalctl | head -2
-chown root:systemd-journal /var/log/journal
 journalctl -b
 journalctl -b -1
-timedatectl list-timezones
-timedatectl set-timezone America/Phoenix
-timedatectl set-time 9:00:00
-timedatectl set-ntp true
 chronyc sources -v
-timedatectl set-timezone America/Port-au-Prince
-timedatectl set-timezone America/Jamaica
 journalctl --since 9:00:00 --until 9:30:00
 logger -p authpriv.alert "Logging test authpriv.alert"
-tail /var/log/auth-errors
-vgcreate vg-alpha /dev/vda2 /dev/vdb1
-lvcreate -n hercules -L 2G vg-alpha
-mkfs -t xfs /dev/vg-alpha/hercules
-lvremove /dev/vg-alpha/hercules
-vgremove vg-alpha
-vgdisplay vg-alpha
-lvdisplay /dev/vg-alpha/hercules
-lvcreate -n storage -L 400M shazam
-mkfs -t xfs /dev/shazam/storage
 fdisk -l /dev/vdb
 df -h /storage
-vgextend vg-alpha /dev/vdb2
-vgreduce vg-alpha /dev/vdb2
 lvextend -L +300M /dev/vg-alpha/hercules
 lvextend -l +extents /dev/vgname/lvname
-resize2fs /dev/vg-alpha/hercules
 lvextend -L 700M /dev/shazam/storage
 yum -y install sysstat
 rpm -qc sysstat
@@ -359,7 +253,6 @@ systemd-tmpfiles --clean gallifrey.conf
 yum -y install nfs-utils
 showmount -e serverX
 mount -t nfs -o sync serverX:/share /mountpoint
-wget -O /etc/krb5.keytab http://classroom.example.com/ pub/keytabs/desktopX.keytab
 mount -o sync,sec=sys serverX:/shares/manual /mnt/manual
 yum -y install autofs
 smbclient -L //serverX
@@ -371,7 +264,6 @@ yum -y install cifs-utils autofs
 grep -e bakerst -e 10221 /etc/group
 groupadd -g 10221 bakerst
 usermod -aG bakerst student
-firewall-config
 firewall-cmd --set-default-zone=dmz
 firewall-cmd --permanent --zone=internal --add-source=192.168.0.0/24
 firewall-cmd --permanent --zone=internal --add-service=mysql
@@ -383,33 +275,10 @@ firewall-cmd --get-default-zone
 firewall-cmd --set-default-zone public
 firewall-cmd --permanent --zone=public --list-all
 firewall-cmd --permanent --zone=public --add-port 8080/tcp
-system-configkickstart
-curl http://classroom.example.com/pub/materials/lab-kickstart -o lab-kickstart
-chmod 755 lab-kickstart
 grep --color -E "vmx|svm" /proc/cpuinfo
 grep --color -E "nx" /proc/cpuinfo
-yum install qemu-kvm qemu-img
-yum install virt-manager libvirt libvirt-python python-virtinst libvirt-client
-nmcli con add type team con-name CNAME ifname INAME [config JSON]
-nmcli con add type team con-name team0 ifname team0 config '{"runner": {"name": "loadbalance"}}'
-nmcli con add type team-slave con-name CNAME ifname INAME master TEAM
-nmcli con add type team-slave ifname eth1 master team0
-nmcli con add type team-slave ifname eth2 master team0 con-name team0- eth2
--i
-nmcli con add type team con-name team0 ifname team0 config '{"runner": {"name": "activebackup"}}'
-nmcli con add type team-slave con-name team0-port1 ifname eno1 master team0
-nmcli con add type team-slave con-name team0-port2 ifname eno2 master team0
 ping -I team0 192.168.0.254
-nmcli con up team0-port1
-nmcli con up team0-port2
-nmcli con mod IFACE team.config JSON-configuration-file-or-string
-nmcli con add type bridge con-name br0 ifname br0
-nmcli con add type bridge-slave con-name br0-port1 ifname eth1 master br0
-nmcli con add type bridge-slave con-name br0-port2 ifname eth2 master br0
-nmcli con add type bridge con-name br1 ifname br1
-nmcli con add type bridge-slave con-name br1-port0 ifname eno1 master br1
 ping -I br1 192.168.0.254
-tail ifcfg-team0
 ping -I brteam0 192.168.0.254
 firewall-cmd --permanent --zone=work --addsource= 172.25.X.0/24
 firewall-cmd --permanent --zone=work --addservice= https
@@ -419,7 +288,6 @@ firewall-cmd --direct --permanent --add-chain ipv4 raw blacklist
 firewall-cmd --direct --permanent --add-rule ipv4 raw PREROUTING 0 -s 192.168.0.0/24 -j blacklist
 firewall-cmd --direct --permanent --add-rule ipv4 raw blacklist 0 -m limit --limit 1/min -j LOG --log-prefix "blacklisted "
 firewall-cmd --direct --permanent --add-rule ipv4 raw blacklist 1 -j DROP
-firewall-cmd --permanent --zone=classroom --add-rich-rule='rule family=ipv4 source address=192.168.0.11/32 reject'
 firewall-cmd --add-rich-rule='rule service name=ftp limit value=2/m accept'
 firewall-cmd --permanent --add-rich-rule='rule protocol value=esp drop'
 firewall-cmd --permanent --zone=vnc --add-rich-rule='rule family=ipv4 source address=192.168.1.0/24 port port=7900-7905 protocol=tcp accept'
@@ -446,7 +314,6 @@ semanage port -l | grep http
 semanage port -a -t http_port_t -p tcp 82
 firewall-cmd --permanent --add-port=82/tcp
 ss -tulpn | grep sshd
-systemctl status -l sshd.service
 semanage port -a -t ssh_port_t -p tcp 999
 firewall-cmd --permanent --zone=work --add-port=999/ tcp
 host -v -t A example.com
@@ -460,15 +327,8 @@ host -v -t MX example.com
 host -v -t TXT lwn.net
 host -v -t SRV _ldap._tcp.server0.example.com
 yum install -y unbound
-unbound-checkconf
 firewall-cmd --permanent --add-service=dns
-unbound-control dump_cache
-unbound-control load_cache < dump.out
-unbound-control flush www.example.com
-unbound-control flush_zone example.com
-unbound-control flush serverX.example.com
 ss -tulpn | grep -w 53
-grep ^[[:space:]]*access-control /etc/unbound/ unbound.conf
 postconf -e 'myorigin = example.com'
 postconf -e "relayhost=[smtpX.example.com]"
 postconf -e "inet_interfaces=loopback-only"
@@ -478,25 +338,16 @@ postconf -e "mydestination="
 postconf -e "local_transport=error: local delivery disabled"
 mail -s "serverX null client" student@desktopX.example.com null client test
 mutt -f imaps://imapX.example.com
-system-config-network
 git add -A
 git commit -am "The commit for chagne"
 git push --set-upstream origin newbranchname
 git remove -v
-docker run docker/whalesay cowsay boo-boo
-man docker-save
-man docker-export
-yum install mongo-10gen mongo-10gen-server
 yum install mongo-10gen mongo-10gen-server --exclude mongodb-org,mongodb-org-server
 yum install mongo-10gen-2.2.3 mongo-10gen-server-2.2.3 --exclude mongodb-org,mongodb-org-server
-use rhlabsfullstack-dev
-docker run hello-world
 docker run -it ubuntu bash
 rvm use 2.2.4 --default
 gem sources --add https://ruby.taobao.org/ --remove https://rubygems.org/
 gem sources -l
-rhc create-app <app name> "http://cartreflect-claytondev.rhcloud.com/reflect?github=connyay/openshift-node-diy" mongodb-<v>
-git remote add rhc git@github.com:connyay/rh-labs-angular-fullstack.git
 git reset --hard rhc/master
 git push origin -f
 alternatives --set libbaccats.so /usr/lib64/libbaccats-{mysql|postgresql|sqlite3}.so
@@ -521,7 +372,6 @@ tar -xf file.tar
 grep -E "^Listen|^ *ProxyPass"
 git tag -a tagname commitString
 gem sources --remove https://ruby.taobao.org/ --add https://rubygems.org/
-bundle config mirror.https://rubygems.org https://gems.ruby-china.org
 rpm -Uvh http://dl.fedoraproject.org/pub/epel/5/x86_64/epel-release-5-4.noarch.rpm
 man -k ''
 ffmpeg -video_size 1024x768 -framerate 25 -f x11grab -i :0.0+100,200 -f pulse -ac 2 -i default output.mkv
